@@ -32,6 +32,8 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .btn-sm:hover{background:var(--surface2)}
 .btn-green{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-green:hover{opacity:.9;background:var(--green)}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-red:hover{opacity:.9;background:var(--red)}
 .wrap{max-width:960px;margin:0 auto;padding:1.5rem;flex:1}
 .op-wrap{max-width:740px;margin:0 auto;padding:1.5rem;flex:1}
 .pg-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
@@ -238,6 +240,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div style="font-size:13px;color:var(--text2);font-weight:500" id="op-name"></div>
+      <button class="btn-sm btn-red" id="reset-btn" onclick="resetAllData()" style="display:none">입력값 초기화</button>
       <button class="btn-sm" onclick="doLogout()" style="color:var(--text2)">로그아웃</button>
     </div>
   </div>
@@ -307,7 +310,11 @@ const USERS = {
   asgs02:{name:'줄넘기 계측관 (asgs02)', can:['jumprope']},
   asgs03:{name:'총괄 계측관 (asgs03)', can:['basketball','jumprope']},
 };
-const PW = '1988';
+const PASSWORDS = {
+  asgs01:'1988',
+  asgs02:'1988',
+  asgs03:'3702',
+};
 
 // =====================
 // LOCAL STATE (synced from Firebase)
@@ -368,7 +375,7 @@ db.ref('.info/connected').on('value', snap => {
 
 // Save to Firebase
 function saveState() {
-  stateRef.set({
+  return stateRef.set({
     bball: state.bball,
     jump: state.jump,
     updatedAt: Date.now()
@@ -391,7 +398,7 @@ function doLogin() {
   const id = document.getElementById('lid').value.trim().toLowerCase();
   const pw = document.getElementById('lpw').value;
   const err = document.getElementById('lerr');
-  if (USERS[id] && pw===PW) {
+  if (USERS[id] && pw===PASSWORDS[id]) {
     err.style.display='none';
     curUser = {id, ...USERS[id]};
     curOpTab = curUser.can[0];
@@ -407,6 +414,30 @@ function doLogout() {
   document.getElementById('lid').value='';
   document.getElementById('lpw').value='';
   go('dash');
+}
+
+function emptyState() {
+  return {
+    bball: Array.from({length:6}, ()=>({teamA:null,teamB:null,winner:null,done:false})),
+    jump:  Array.from({length:12}, ()=>({r1:null,r2:null,r3:null,done:false}))
+  };
+}
+
+function resetAllData() {
+  if (!curUser || curUser.id !== 'asgs03') {
+    toast('총괄 계측관(asgs03)만 초기화할 수 있습니다.');
+    return;
+  }
+  const ok = confirm('asgs01·asgs02가 입력한 농구/줄넘기 결과를 모두 초기화할까요? 이 작업은 되돌릴 수 없습니다.');
+  if (!ok) return;
+
+  state = emptyState();
+  curGameIdx = findNextGame();
+  saveState().then(() => {
+    refreshDash();
+    renderOp();
+    toast('✅ 모든 입력값이 초기화되었습니다.');
+  });
 }
 
 // =====================
@@ -578,6 +609,8 @@ function downloadExcel() {
 // =====================
 function renderOp() {
   document.getElementById('op-name').textContent = curUser.name;
+  const resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) resetBtn.style.display = curUser.id === 'asgs03' ? 'inline-block' : 'none';
   const tabs = document.getElementById('op-tabs');
   tabs.innerHTML = '';
   curUser.can.forEach(type => {
