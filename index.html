@@ -21,13 +21,14 @@
 }
 body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.on{display:flex}
-.top-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;flex-shrink:0}
-.nav-logo{font-size:14px;font-weight:700;color:var(--accent)}
-.nav-tabs{display:flex}
-.nav-tab{padding:0 14px;height:56px;display:flex;align-items:center;font-size:13px;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--text2);background:none;transition:all .15s}
+.top-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(180px,1fr);align-items:center;gap:10px;min-height:56px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.nav-logo{font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.nav-tabs{display:flex;justify-content:center;gap:2px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{padding:0 14px;height:40px;min-height:40px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--text2);background:none;transition:all .15s;white-space:nowrap;flex:0 0 auto}
 .nav-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .nav-tab:hover:not(.on){color:var(--text)}
-.nav-r{display:flex;align-items:center;gap:6px}
+.nav-r{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
 .btn-sm{padding:6px 12px;border:1px solid var(--border2);border-radius:var(--rs);font-size:12px;cursor:pointer;background:none;color:var(--text);transition:all .12s;white-space:nowrap}
 .btn-sm:hover{background:var(--surface2)}
 .btn-green{background:var(--green);color:#fff;border-color:var(--green)}
@@ -77,10 +78,19 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .fbtn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer}
 .fbtn:hover{opacity:.9}
 .ferr{font-size:12px;color:var(--red);background:var(--red-l);padding:8px 12px;border-radius:var(--rs);margin-bottom:12px;display:none}
-.op-hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.op-hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0}
 .op-tabs{display:flex;gap:4px}
 .op-tab{padding:6px 14px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;cursor:pointer;background:none;color:var(--text2);transition:all .12s}
 .op-tab.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.op-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.reset-actions{display:none;gap:6px;flex-wrap:wrap}
+.score-row{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;padding:1rem;background:var(--surface2);border-radius:var(--rs);margin-bottom:.75rem}
+.score-box{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem}
+.score-input{width:100%;max-width:120px;padding:9px 8px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:24px;text-align:center;font-weight:800;color:var(--text);background:var(--surface);transition:border .15s}
+.score-input:focus{outline:none;border-color:var(--accent)}
+.score-input.win{border-color:var(--accent);background:var(--accent-l);color:var(--accent)}
+.score-mid{text-align:center;font-size:18px;font-weight:800;color:var(--text3)}
+
 .prog-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem}
 .prog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
 .prog-title{font-size:14px;font-weight:600;color:var(--text)}
@@ -139,10 +149,26 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .toast.show{opacity:1}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);display:inline-block;margin-right:5px;transition:background .3s}
 .sync-dot.live{background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
-@media(max-width:640px){
+@media(max-width:720px){
+  .top-nav{grid-template-columns:1fr;align-items:stretch;padding:.65rem 1rem;gap:4px}
+  .nav-logo{text-align:center;font-size:13px;max-width:100%}
+  .nav-tabs{justify-content:flex-start;padding:.2rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .nav-tab{height:38px;min-height:38px;padding:0 12px;font-size:13px}
+  .nav-r{justify-content:center;padding-top:.25rem}
+  .btn-sm{font-size:12px;padding:7px 10px}
+  .wrap,.op-wrap{padding:1rem}
+  .op-hdr{align-items:flex-start;padding:.75rem 1rem}
+  .op-actions{width:100%;justify-content:flex-start}
   .metrics{grid-template-columns:repeat(2,1fr)}
   .ggrid{grid-template-columns:repeat(2,1fr)}
+  .score-row{grid-template-columns:1fr;gap:8px}
+  .score-mid{display:none}
+}
+@media(max-width:420px){
+  .metrics{grid-template-columns:1fr}
+  .ggrid{grid-template-columns:1fr}
   .nav-logo{font-size:12px}
+  .timer-display-mobile{font-size:28px}
 }
 </style>
 </head>
@@ -158,7 +184,6 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
       <button class="nav-tab" onclick="dashTab('jumprope',this)">단체줄넘기</button>
     </div>
     <div class="nav-r">
-      <button class="btn-sm btn-green" onclick="downloadExcel()">📥 엑셀 다운로드</button>
       <button class="btn-sm" onclick="go('login')">계측관 로그인</button>
     </div>
   </nav>
@@ -168,7 +193,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
       <div id="timer-banner" style="background:var(--accent);color:#fff;border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
         <div>
           <div style="font-size:11px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px" id="timer-label">체육한마당 시작까지</div>
-          <div style="font-size:36px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums" id="timer-display">--:--:--</div>
+          <div style="font-size:36px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums" id="timer-display" class="timer-display-mobile">--:--:--</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;opacity:.7;margin-bottom:4px">
@@ -194,7 +219,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
     </div>
     <div id="dp-basketball" style="display:none">
       <div class="pg-title">농구 경기 현황</div>
-      <div class="pg-sub">총 6경기 · 승리 시 10점</div>
+      <div class="pg-sub">총 6경기 · 골득점 자동 판정 · 승리 시 10점</div>
       <div class="ggrid" id="d-ggrid"></div>
     </div>
     <div id="dp-jumprope" style="display:none">
@@ -234,13 +259,17 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 <!-- OPERATOR -->
 <div id="sc-op" class="screen">
   <div class="op-hdr">
-    <div style="display:flex;align-items:center;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <div style="font-size:15px;font-weight:700;color:var(--accent)">🏆 계측관</div>
       <div class="op-tabs" id="op-tabs"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div class="op-actions">
       <div style="font-size:13px;color:var(--text2);font-weight:500" id="op-name"></div>
-      <button class="btn-sm btn-red" id="reset-btn" onclick="resetAllData()" style="display:none">입력값 초기화</button>
+      <button class="btn-sm btn-green" onclick="downloadExcel()">📊 경기결과</button>
+      <span class="reset-actions" id="reset-actions">
+        <button class="btn-sm btn-red" onclick="resetSection('basketball')">농구 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('jumprope')">줄넘기 초기화</button>
+      </span>
       <button class="btn-sm" onclick="doLogout()" style="color:var(--text2)">로그아웃</button>
     </div>
   </div>
@@ -319,9 +348,15 @@ const PASSWORDS = {
 // =====================
 // LOCAL STATE (synced from Firebase)
 // =====================
+function emptyBballGame(){
+  return {teamA:null,teamB:null,scoreA:null,scoreB:null,winner:null,done:false};
+}
+function emptyJumpRecord(){
+  return {r1:null,r2:null,r3:null,done:false};
+}
 let state = {
-  bball: Array.from({length:6}, ()=>({teamA:null,teamB:null,winner:null,done:false})),
-  jump:  Array.from({length:12}, ()=>({r1:null,r2:null,r3:null,done:false})),
+  bball: Array.from({length:6}, emptyBballGame),
+  jump:  Array.from({length:12}, emptyJumpRecord),
 };
 
 let curUser=null, curOpTab='basketball', curGameIdx=0;
@@ -336,10 +371,10 @@ stateRef.on('value', snap => {
   if (data) {
     // Merge Firebase data into local state
     if (data.bball) {
-      data.bball.forEach((g, i) => { if (g) state.bball[i] = g; });
+      data.bball.forEach((g, i) => { if (g) state.bball[i] = {...emptyBballGame(), ...g}; });
     }
     if (data.jump) {
-      data.jump.forEach((j, i) => { if (j) state.jump[i] = j; });
+      data.jump.forEach((j, i) => { if (j) state.jump[i] = {...emptyJumpRecord(), ...j}; });
     }
   }
   // Update sync indicator
@@ -418,25 +453,30 @@ function doLogout() {
 
 function emptyState() {
   return {
-    bball: Array.from({length:6}, ()=>({teamA:null,teamB:null,winner:null,done:false})),
-    jump:  Array.from({length:12}, ()=>({r1:null,r2:null,r3:null,done:false}))
+    bball: Array.from({length:6}, emptyBballGame),
+    jump:  Array.from({length:12}, emptyJumpRecord)
   };
 }
 
-function resetAllData() {
+function resetSection(type) {
   if (!curUser || curUser.id !== 'asgs03') {
     toast('총괄 계측관(asgs03)만 초기화할 수 있습니다.');
     return;
   }
-  const ok = confirm('asgs01·asgs02가 입력한 농구/줄넘기 결과를 모두 초기화할까요? 이 작업은 되돌릴 수 없습니다.');
+  const label = type === 'basketball' ? '농구' : '단체줄넘기';
+  const ok = confirm(`${label} 입력값만 초기화할까요? 이 작업은 되돌릴 수 없습니다.`);
   if (!ok) return;
 
-  state = emptyState();
-  curGameIdx = findNextGame();
+  if (type === 'basketball') {
+    state.bball = Array.from({length:6}, emptyBballGame);
+    curGameIdx = findNextGame();
+  } else if (type === 'jumprope') {
+    state.jump = Array.from({length:12}, emptyJumpRecord);
+  }
   saveState().then(() => {
     refreshDash();
     renderOp();
-    toast('✅ 모든 입력값이 초기화되었습니다.');
+    toast(`✅ ${label} 입력값이 초기화되었습니다.`);
   });
 }
 
@@ -516,10 +556,10 @@ function refreshDash() {
       <div class="gc-lbl">경기 ${gi+1} <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span></div>
       <div class="gc-teams">
         <span class="${fin&&g.winner===0?'gc-win':''}">${tA}</span>
-        <span class="gc-vs">vs</span>
+        <span class="gc-vs">${fin&&g.scoreA!=null&&g.scoreB!=null?`${g.scoreA} : ${g.scoreB}`:'vs'}</span>
         <span class="${fin&&g.winner===1?'gc-win':''}">${tB}</span>
       </div>
-      ${fin?`<div class="gc-res">승자: ${g.winner===0?tA:tB}</div>`:''}
+      ${fin?`<div class="gc-res">승자: ${g.winner===0?tA:tB}${g.scoreA!=null&&g.scoreB!=null?` · 골득점 ${g.scoreA}:${g.scoreB}`:''}</div>`:''}
     </div>`;
   }).join('');
 
@@ -567,19 +607,21 @@ function downloadExcel() {
   XLSX.utils.book_append_sheet(wb, ws1, '종합순위');
 
   // Sheet 2: 농구 결과
-  const bbRows = [['경기','팀 A','팀 B','승자','점수(A)','점수(B)']];
+  const bbRows = [['경기','팀 A','팀 A 골득점','팀 B 골득점','팀 B','승자','농구점수(A)','농구점수(B)']];
   state.bball.forEach((g,gi) => {
     const tA = g.teamA!=null?`${g.teamA+1}반`:'미정';
     const tB = g.teamB!=null?`${g.teamB+1}반`:'미정';
     const w = g.done?(g.winner===0?tA:tB):'미완료';
     bbRows.push([
-      `경기 ${gi+1}`, tA, tB, w,
+      `경기 ${gi+1}`, tA,
+      g.scoreA??'', g.scoreB??'',
+      tB, w,
       g.done&&g.winner===0?10:0,
       g.done&&g.winner===1?10:0
     ]);
   });
   const ws2 = XLSX.utils.aoa_to_sheet(bbRows);
-  ws2['!cols'] = [{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8}];
+  ws2['!cols'] = [{wch:8},{wch:8},{wch:12},{wch:12},{wch:8},{wch:8},{wch:12},{wch:12}];
   XLSX.utils.book_append_sheet(wb, ws2, '농구결과');
 
   // Sheet 3: 줄넘기 결과
@@ -609,8 +651,8 @@ function downloadExcel() {
 // =====================
 function renderOp() {
   document.getElementById('op-name').textContent = curUser.name;
-  const resetBtn = document.getElementById('reset-btn');
-  if (resetBtn) resetBtn.style.display = curUser.id === 'asgs03' ? 'inline-block' : 'none';
+  const resetActions = document.getElementById('reset-actions');
+  if (resetActions) resetActions.style.display = curUser.id === 'asgs03' ? 'inline-flex' : 'none';
   const tabs = document.getElementById('op-tabs');
   tabs.innerHTML = '';
   curUser.can.forEach(type => {
@@ -679,13 +721,19 @@ function renderBbOp() {
         </select></div>
     </div>
     <div id="winner-sec" style="display:none">
-      <div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:.5rem">승자 선택</div>
-      <div class="win-row">
-        <div class="wteam"><div class="wname" id="wn-a">팀 A</div><button class="wbtn" id="wb-a" onclick="pickWinner(0)">승리</button></div>
-        <div class="wvs">VS</div>
-        <div class="wteam"><div class="wname" id="wn-b">팀 B</div><button class="wbtn" id="wb-b" onclick="pickWinner(1)">승리</button></div>
+      <div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:.5rem">골 득점 입력</div>
+      <div class="score-row">
+        <div class="score-box">
+          <div class="wname" id="wn-a">팀 A</div>
+          <input class="score-input" type="number" min="0" id="score-a" value="${g.scoreA??''}" oninput="onScoreChange()" placeholder="0">
+        </div>
+        <div class="score-mid">:</div>
+        <div class="score-box">
+          <div class="wname" id="wn-b">팀 B</div>
+          <input class="score-input" type="number" min="0" id="score-b" value="${g.scoreB??''}" oninput="onScoreChange()" placeholder="0">
+        </div>
       </div>
-      <div id="wstatus" style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:.75rem">승자를 선택하세요</div>
+      <div id="wstatus" style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:.75rem">양팀 골 득점을 입력하세요</div>
       <button class="sbtn" id="bb-sub" onclick="submitBb()" disabled>입력 완료 — 서명 진행</button>
     </div>
   </div>`;
@@ -696,7 +744,7 @@ function renderBbOp() {
       const tA=`${g.teamA+1}반`,tB=`${g.teamB+1}반`,w=g.winner===0?tA:tB;
       html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
         <span style="color:var(--text3);min-width:50px">경기 ${i+1}</span>
-        <span style="font-weight:600">${tA} vs ${tB}</span>
+        <span style="font-weight:600">${tA} ${g.scoreA??'-'} : ${g.scoreB??'-'} ${tB}</span>
         <span>승: <span style="color:var(--accent);font-weight:700">${w}</span></span>
         <span class="tag tdone">완료</span></div>`;
     });
@@ -730,26 +778,46 @@ function onTeamChange(){
   if(vA!==''&&vB!==''){
     ws.style.display='block';
     setTxt('wn-a',`${parseInt(vA)+1}반`);setTxt('wn-b',`${parseInt(vB)+1}반`);
-    updateWinBtns();
+    onScoreChange();
   } else { ws.style.display='none'; }
 }
-function pickWinner(side){bbWinner=side;updateWinBtns();}
-function updateWinBtns(){
-  const bA=document.getElementById('wb-a'),bB=document.getElementById('wb-b'),st=document.getElementById('wstatus'),sub=document.getElementById('bb-sub');
-  if(!bA)return;
-  bA.className='wbtn'+(bbWinner===0?' win':bbWinner===1?' lose':'');
-  bB.className='wbtn'+(bbWinner===1?' win':bbWinner===0?' lose':'');
-  if(bbWinner===null){if(st)st.textContent='승자를 선택하세요';if(sub)sub.disabled=true;}
-  else{
-    const sA=document.getElementById('sel-a'),sB=document.getElementById('sel-b');
-    const wn=bbWinner===0?`${parseInt(sA.value)+1}반`:`${parseInt(sB.value)+1}반`;
-    if(st)st.textContent=`선택된 승자: ${wn}`;if(sub)sub.disabled=false;
+function onScoreChange(){
+  const g=state.bball[curGameIdx];
+  const scoreAEl=document.getElementById('score-a'),scoreBEl=document.getElementById('score-b');
+  const st=document.getElementById('wstatus'),sub=document.getElementById('bb-sub');
+  if(!g||!scoreAEl||!scoreBEl)return;
+  const a=scoreAEl.value===''?null:parseInt(scoreAEl.value);
+  const b=scoreBEl.value===''?null:parseInt(scoreBEl.value);
+  g.scoreA=a; g.scoreB=b;
+  scoreAEl.classList.remove('win'); scoreBEl.classList.remove('win');
+  if(a==null||b==null||Number.isNaN(a)||Number.isNaN(b)){
+    bbWinner=null;
+    if(st)st.textContent='양팀 골 득점을 입력하세요';
+    if(sub)sub.disabled=true;
+    return;
   }
+  if(a===b){
+    bbWinner=null;
+    if(st)st.textContent='동점은 승자를 정할 수 없습니다. 득점을 다시 확인하세요.';
+    if(sub)sub.disabled=true;
+    return;
+  }
+  bbWinner=a>b?0:1;
+  const sA=document.getElementById('sel-a'),sB=document.getElementById('sel-b');
+  const wn=bbWinner===0?`${parseInt(sA.value)+1}반`:`${parseInt(sB.value)+1}반`;
+  if(bbWinner===0)scoreAEl.classList.add('win'); else scoreBEl.classList.add('win');
+  if(st)st.textContent=`자동 판정 승자: ${wn} · 골득점 ${a}:${b}`;
+  if(sub)sub.disabled=false;
 }
 function submitBb(){
   const gi=curGameIdx,g=state.bball[gi];
-  if(g.teamA==null||g.teamB==null||bbWinner==null)return;
-  sigPend={type:'basketball',gi,teamA:`${g.teamA+1}반`,teamB:`${g.teamB+1}반`,winner:bbWinner};
+  if(g.teamA==null||g.teamB==null)return;
+  onScoreChange();
+  if(bbWinner==null){
+    toast('골 득점을 확인해 주세요. 동점은 입력 완료할 수 없습니다.');
+    return;
+  }
+  sigPend={type:'basketball',gi,teamA:`${g.teamA+1}반`,teamB:`${g.teamB+1}반`,scoreA:g.scoreA,scoreB:g.scoreB,winner:bbWinner};
   openSig();
 }
 
@@ -801,7 +869,7 @@ function openSig(){
   const d=sigPend;
   let sub,la,lb;
   if(d.type==='basketball'){
-    sub=`경기 ${d.gi+1}: ${d.teamA} vs ${d.teamB} · 승자: ${d.winner===0?d.teamA:d.teamB}`;
+    sub=`경기 ${d.gi+1}: ${d.teamA} ${d.scoreA??'-'} : ${d.scoreB??'-'} ${d.teamB} · 승자: ${d.winner===0?d.teamA:d.teamB}`;
     la=`${d.teamA} 주장 서명`;lb=`${d.teamB} 주장 서명`;
   } else {
     sub=`${d.ci+1}반 단체줄넘기 기록 확인`;
@@ -851,6 +919,8 @@ function confirmSig(){
   if(!sigA||!sigB)return;
   const d=sigPend;
   if(d.type==='basketball'){
+    state.bball[d.gi].scoreA=d.scoreA;
+    state.bball[d.gi].scoreB=d.scoreB;
     state.bball[d.gi].winner=d.winner;
     state.bball[d.gi].done=true;
     curGameIdx=findNextGame();
