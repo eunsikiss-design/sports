@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 안산강서고 체육한마당</title>
+<title>2026 안산강서고등학교 체육한마당(1학년)</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -21,14 +21,16 @@
 }
 body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.on{display:flex}
-.top-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(180px,1fr);align-items:center;gap:10px;min-height:56px;position:sticky;top:0;z-index:100;flex-shrink:0}
-.nav-logo{font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.nav-tabs{display:flex;justify-content:center;gap:2px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.top-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;flex-shrink:0;flex-wrap:wrap}
+.nav-logo{font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-shrink:1}
+.nav-tabs{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:0;min-width:0;flex:1 1 100%;order:3;border-top:1px solid var(--border);padding-top:2px;margin:0 -1.25rem;padding-left:1.25rem;padding-right:1.25rem}
 .nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{padding:0 14px;height:40px;min-height:40px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--text2);background:none;transition:all .15s;white-space:nowrap;flex:0 0 auto}
+.nav-tab{padding:0 12px;height:36px;min-height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--text2);background:none;transition:all .15s;white-space:nowrap;flex:0 0 auto}
 .nav-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .nav-tab:hover:not(.on){color:var(--text)}
-.nav-r{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.nav-r{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-shrink:0;order:2}
+.btn-admin{width:36px;height:36px;border:1.5px solid var(--border2);border-radius:50%;font-size:18px;cursor:pointer;background:var(--surface2);display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--text2);padding:0}
+.btn-admin:hover{background:var(--accent-l);border-color:var(--accent);color:var(--accent)}
 .btn-sm{padding:6px 12px;border:1px solid var(--border2);border-radius:var(--rs);font-size:12px;cursor:pointer;background:none;color:var(--text);transition:all .12s;white-space:nowrap}
 .btn-sm:hover{background:var(--surface2)}
 .btn-green{background:var(--green);color:#fff;border-color:var(--green)}
@@ -124,6 +126,10 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .ninput:focus{outline:none;border-color:var(--accent)}
 .best-disp{font-size:13px;font-weight:700;color:var(--accent);padding:.5rem 1rem;background:var(--accent-l);border-radius:var(--rs);margin-bottom:.75rem;text-align:center}
 .done-box{text-align:center;padding:1rem;background:var(--green-l);border-radius:var(--rs);font-size:14px;color:var(--green);font-weight:600}
+.done-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:.75rem 1rem;background:var(--green-l);border-radius:var(--rs)}
+.done-txt{font-size:13px;color:var(--green);font-weight:600}
+.edit-btn{padding:5px 12px;border:1.5px solid var(--green);border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--green);white-space:nowrap;transition:all .15s}
+.edit-btn:hover{background:var(--green);color:#fff}
 .alert{padding:9px 12px;border-radius:var(--rs);font-size:13px;margin-bottom:.75rem;display:none}
 .alert-w{background:var(--warn-l);color:var(--warn);border:1px solid #FAC775}
 .alldown{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
@@ -190,11 +196,10 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .metric-sm .m-val{font-size:18px}
 .rank-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
 @media(max-width:720px){
-  .top-nav{grid-template-columns:1fr;align-items:stretch;padding:.65rem 1rem;gap:4px}
-  .nav-logo{text-align:center;font-size:13px;max-width:100%}
-  .nav-tabs{justify-content:flex-start;padding:.2rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-  .nav-tab{height:38px;min-height:38px;padding:0 12px;font-size:13px}
-  .nav-r{justify-content:center;padding-top:.25rem}
+  .top-nav{padding:.5rem 1rem;gap:4px}
+  .nav-logo{font-size:13px}
+  .nav-tabs{margin:0 -1rem;padding-left:1rem;padding-right:1rem}
+  .nav-tab{height:34px;min-height:34px;padding:0 10px;font-size:12px}
   .btn-sm{font-size:12px;padding:7px 10px}
   .wrap,.op-wrap{padding:1rem}
   .op-hdr{align-items:flex-start;padding:.75rem 1rem}
@@ -203,7 +208,6 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
   .ggrid{grid-template-columns:repeat(2,1fr)}
   .score-row{grid-template-columns:1fr;gap:8px}
   .score-mid{display:none}
-  /* 종합순위 테이블 모바일 카드형 */
   .rank-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -1rem;padding:0 1rem}
   .rtable th:nth-child(n+3):nth-child(-n+10){font-size:10px;padding:5px 6px}
   .rtable td:nth-child(n+3):nth-child(-n+10){font-size:12px;padding:7px 6px}
@@ -224,20 +228,33 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 <!-- DASHBOARD -->
 <div id="sc-dash" class="screen on">
   <nav class="top-nav">
-    <div class="nav-logo">🏆 2026 안산강서고 체육한마당</div>
-    <div class="nav-tabs">
+    <div class="nav-logo" style="order:1">🏆 2026 안산강서고등학교 체육한마당(1학년)</div>
+    <div class="nav-r" style="order:2">
+      <button class="btn-admin" onclick="go('login')" title="계측관 로그인">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          <circle cx="18" cy="6" r="3" fill="var(--accent)" stroke="none"/>
+          <path d="M16.5 6 L17.5 7 L19.5 5" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-tabs" style="order:3">
+      <!-- 1행: 종합순위 + 체육관 경기 -->
       <button class="nav-tab on" onclick="dashTab('overview',this)">종합순위</button>
+      <span style="display:inline-flex;align-items:center;padding:0 6px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px;border-left:1px solid var(--border);margin:8px 4px;height:20px">🏀체육관</span>
       <button class="nav-tab" onclick="dashTab('basketball',this)">🏀 농구</button>
-      <button class="nav-tab" onclick="dashTab('jumprope',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:2px"><path d="M5 20 Q12 4 19 20"/><circle cx="5" cy="20" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="20" r="2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="3" ry="4" fill="currentColor" stroke="none" opacity=".7"/></svg>줄넘기</button>
+      <button class="nav-tab" onclick="dashTab('jumprope',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:2px"><path d="M5 20 Q12 4 19 20"/><circle cx="5" cy="20" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="20" r="2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="3" ry="4" fill="currentColor" stroke="none" opacity=".7"/></svg>줄넘기</button>
+      <!-- 줄바꿈 강제 -->
+      <div style="width:100%;height:0;flex-basis:100%"></div>
+      <!-- 2행: 운동장 경기 -->
+      <span style="display:inline-flex;align-items:center;padding:0 6px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px;height:20px;margin:8px 4px 8px 0">⚽운동장</span>
       <button class="nav-tab" onclick="dashTab('airladder',this)">🏃 에어사다리</button>
       <button class="nav-tab" onclick="dashTab('wavepass',this)">🌊 파도넘기</button>
       <button class="nav-tab" onclick="dashTab('superman',this)">🦸 슈퍼맨</button>
       <button class="nav-tab" onclick="dashTab('tugofwar',this)">💪 줄다리기</button>
       <button class="nav-tab" onclick="dashTab('penaltykick',this)">⚽ 승부차기</button>
       <button class="nav-tab" onclick="dashTab('relay',this)">🏃‍♂️ 계주</button>
-    </div>
-    <div class="nav-r">
-      <button class="btn-sm" onclick="go('login')">계측관 로그인</button>
     </div>
   </nav>
   <div class="wrap">
@@ -1321,11 +1338,12 @@ function renderBbOp() {
     html+=`<div class="card"><div class="card-title">완료된 경기</div>`;
     doneList.forEach(({g,i})=>{
       const tA=`${g.teamA+1}반`,tB=`${g.teamB+1}반`,w=g.winner===0?tA:tB;
-      html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;gap:8px;flex-wrap:wrap">
         <span style="color:var(--text3);min-width:50px">경기 ${i+1}</span>
         <span style="font-weight:600">${tA} ${g.scoreA??'-'} : ${g.scoreB??'-'} ${tB}</span>
         <span>승: <span style="color:var(--accent);font-weight:700">${w}</span></span>
-        <span class="tag tdone">완료</span></div>`;
+        <button class="edit-btn" onclick="editBball(${i})">✏️ 수정</button>
+      </div>`;
     });
     html+=`</div>`;
   }
@@ -1399,6 +1417,13 @@ function submitBb(){
   sigPend={type:'basketball',gi,teamA:`${g.teamA+1}반`,teamB:`${g.teamB+1}반`,scoreA:g.scoreA,scoreB:g.scoreB,winner:bbWinner};
   openSig();
 }
+function editBball(gi){
+  if(!confirm(`경기 ${gi+1} 결과를 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.`)) return;
+  state.bball[gi].done=false;
+  curGameIdx=gi;
+  renderOp();
+  toast(`경기 ${gi+1} 수정 모드로 전환되었습니다.`);
+}
 
 // ---- JUMPROPE ----
 function renderJrOp(){
@@ -1415,7 +1440,10 @@ function renderJrOp(){
     html+=`<div class="card"><div class="card-title">${ci+1}반 <span class="tag ${j.done?'tdone':'tpend'}">${j.done?'완료':'대기'}</span></div>`;
     if(j.done){
       const vs=[j.r1,j.r2,j.r3].filter(x=>x!=null).map(Number);
-      html+=`<div class="done-box">✅ 입력 완료 · 최고기록: ${vs.length?Math.max(...vs):'?'}회</div>`;
+      html+=`<div class="done-row">
+        <span class="done-txt">✅ 완료 · 최고기록: ${vs.length?Math.max(...vs):'?'}회 (${[j.r1,j.r2,j.r3].map((v,i)=>`${i+1}회:${v??'-'}`).join(' / ')})</span>
+        <button class="edit-btn" onclick="editJr(${ci})">✏️ 수정</button>
+      </div>`;
     } else {
       html+=`<div class="jinp-grid">
         ${[1,2,3].map(r=>`<div><div style="font-size:12px;color:var(--text2);margin-bottom:4px;text-align:center">${r}회차</div>
@@ -1451,22 +1479,29 @@ function renderRound4Op(key){
     const teamNames=teams.map(ci=>`${ci+1}반`);
     if(r.done){
       html+=`<div class="card"><div class="card-title">${ri+1}라운드 — ${teamNames.join(' · ')} <span class="tag tdone">완료</span></div>
-        <div class="done-box">✅ 1위: ${r.rank1!=null?teamNames[r.rank1]:'?'} &nbsp;|&nbsp; 2위: ${r.rank2!=null?teamNames[r.rank2]:'?'}</div>
+        <div class="done-row">
+          <span class="done-txt">🥇 1위: ${r.rank1!=null?teamNames[r.rank1]:'?'} &nbsp;|&nbsp; 🥈 2위: ${r.rank2!=null?teamNames[r.rank2]:'?'}</span>
+          <button class="edit-btn" onclick="editRound4('${key}',${ri})">✏️ 수정</button>
+        </div>
       </div>`;
     } else {
+      // 이전 값이 있으면 복원
+      const prev=state[key][ri];
       html+=`<div class="cur-game"><div class="cur-game-hd"><span>${ri+1}라운드 결과 입력</span></div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:.75rem">참가 반: <strong>${teamNames.join(', ')}</strong></div>
         <div class="rank-inp-row">
-          ${[0,1,2,3].map(pos=>`<div class="ri-box">
+          ${[0,1,2,3].map(pos=>{
+            const prevVal = pos===0&&prev.rank1!=null ? prev.rank1 : pos===1&&prev.rank2!=null ? prev.rank2 : null;
+            return `<div class="ri-box">
             <div class="ri-lbl">${['🥇 1위','🥈 2위','3위','4위'][pos]}</div>
             <select class="ri-sel ${pos===0?'gold':pos===1?'silver':''}" id="${key}-r${ri}-p${pos}" onchange="onRound4Change('${key}',${ri})">
               <option value="">선택</option>
-              ${teamNames.map((n,ti)=>`<option value="${ti}">${n}</option>`).join('')}
+              ${teamNames.map((n,ti)=>`<option value="${ti}"${prevVal===ti?' selected':''}>${n}</option>`).join('')}
             </select>
-          </div>`).join('')}
+          </div>`;}).join('')}
         </div>
         <div id="${key}-r${ri}-warn" style="font-size:12px;color:var(--red);margin-bottom:.5rem;display:none">같은 순위에 같은 반을 선택할 수 없습니다.</div>
-        <button class="sbtn" id="${key}-r${ri}-sub" onclick="submitRound4('${key}',${ri})" disabled>입력 완료 — 서명 진행</button>
+        <button class="sbtn" id="${key}-r${ri}-sub" onclick="submitRound4('${key}',${ri})" ${prev.rank1!=null&&prev.rank2!=null?'':'disabled'}>입력 완료 — 서명 진행</button>
       </div>`;
     }
   });
@@ -1483,13 +1518,18 @@ function onRound4Change(key,ri){
   if(sub) sub.disabled = !(r1!=null&&r2!=null&&!hasDup);
 }
 function submitRound4(key,ri){
-  if(state[key][ri].done){toast('이미 입력된 라운드입니다.');return;}
   const vals=[0,1,2,3].map(pos=>{const el=document.getElementById(`${key}-r${ri}-p${pos}`);return el&&el.value!==''?parseInt(el.value):null;});
   const r1=vals[0],r2=vals[1];
   if(r1==null||r2==null){toast('1위와 2위는 반드시 선택해야 합니다.');return;}
   const teams=ROUND4_ROUNDS[key][ri];
   sigPend={type:'round4',key,ri,rank1:r1,rank2:r2,label:ROUND4_NAMES[key],teams:teams.map(ci=>`${ci+1}반`)};
   openSig();
+}
+function editRound4(key,ri){
+  if(!confirm(`${ROUND4_NAMES[key]} ${ri+1}라운드 결과를 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.`)) return;
+  state[key][ri].done=false;
+  renderOp();
+  toast(`${ROUND4_NAMES[key]} ${ri+1}라운드 수정 모드로 전환되었습니다.`);
 }
 
 // ---- MATCH (슈퍼맨/줄다리기) ----
@@ -1512,8 +1552,11 @@ function renderMatchOp(key){
     if(r.done){
       const wn=r.winner===0?nameA:nameB;
       html+=`<div class="card"><div class="card-title">${ri+1}라운드 <span class="tag tdone">완료</span></div>
-        <div style="font-size:13px;color:var(--text2)">${nameA} <strong>vs</strong> ${nameB}</div>
-        <div class="done-box" style="margin-top:.5rem">🏆 승리: ${wn}</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:.5rem">${nameA} <strong>vs</strong> ${nameB}</div>
+        <div class="done-row">
+          <span class="done-txt">🏆 승리: ${wn}</span>
+          <button class="edit-btn" onclick="editMatch('${key}',${ri})">✏️ 수정</button>
+        </div>
       </div>`;
     } else {
       html+=`<div class="cur-game"><div class="cur-game-hd"><span>${ri+1}라운드 결과 입력</span></div>
@@ -1553,6 +1596,13 @@ function submitMatch(key,ri){
   sigPend={type:'match',key,ri,winner:w,label:MATCH_NAMES[key],teamA:nameA,teamB:nameB};
   openSig();
 }
+function editMatch(key,ri){
+  if(!confirm(`${MATCH_NAMES[key]} ${ri+1}라운드 결과를 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.`)) return;
+  state[key][ri].done=false;
+  delete matchWinners[`${key}-${ri}`];
+  renderOp();
+  toast(`${MATCH_NAMES[key]} ${ri+1}라운드 수정 모드로 전환되었습니다.`);
+}
 
 // ---- PENALTY KICK (승부차기) ----
 function renderPKOp(){
@@ -1570,7 +1620,10 @@ function renderPKOp(){
     const [ciA,ciB]=PK_MATCHES[ri];
     if(r.done){
       html+=`<div class="card"><div class="card-title">경기 ${ri+1}: ${ciA+1}반 vs ${ciB+1}반 <span class="tag tdone">완료</span></div>
-        <div class="done-box">🏆 승리: ${r.winner===0?ciA+1:ciB+1}반</div>
+        <div class="done-row">
+          <span class="done-txt">🏆 승리: ${r.winner===0?ciA+1:ciB+1}반</span>
+          <button class="edit-btn" onclick="editPK(${ri})">✏️ 수정</button>
+        </div>
       </div>`;
     } else {
       html+=`<div class="cur-game"><div class="cur-game-hd"><span>경기 ${ri+1} 결과 입력</span></div>
@@ -1608,16 +1661,29 @@ function submitPK(ri){
   sigPend={type:'penaltykick',ri,winner:w,teamA:`${ciA+1}반`,teamB:`${ciB+1}반`};
   openSig();
 }
+function editPK(ri){
+  const [ciA,ciB]=PK_MATCHES[ri];
+  if(!confirm(`승부차기 경기 ${ri+1} (${ciA+1}반 vs ${ciB+1}반) 결과를 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.`)) return;
+  state.penaltykick[ri].done=false;
+  delete pkWinners[ri];
+  renderOp();
+  toast(`승부차기 경기 ${ri+1} 수정 모드로 전환되었습니다.`);
+}
 function calcBest(ci){
   const vs=[1,2,3].map(r=>{const el=document.getElementById(`jr-${ci}-${r}`);return el&&el.value!==''?parseInt(el.value):null;}).filter(x=>x!=null);
   const el=document.getElementById(`jbest-${ci}`);
   if(el)el.textContent=vs.length?`최고기록: ${Math.max(...vs)}회`:'최고기록: —';
 }
 function submitJr(ci){
-  if(state.jump[ci].done){toast('이미 입력이 완료된 항목입니다.');return;}
   const vals=[1,2,3].map(r=>{const el=document.getElementById(`jr-${ci}-${r}`);return el&&el.value!==''?parseInt(el.value):null;});
   sigPend={type:'jumprope',ci,r1:vals[0],r2:vals[1],r3:vals[2]};
   openSig();
+}
+function editJr(ci){
+  if(!confirm(`${ci+1}반 줄넘기 기록을 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.`)) return;
+  state.jump[ci].done=false;
+  renderOp();
+  toast(`${ci+1}반 줄넘기 수정 모드로 전환되었습니다.`);
 }
 
 // =====================
