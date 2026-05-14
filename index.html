@@ -149,6 +149,46 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 .toast.show{opacity:1}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);display:inline-block;margin-right:5px;transition:background .3s}
 .sync-dot.live{background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
+.round-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:.75rem}
+.round-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.round-title{font-size:14px;font-weight:700;color:var(--text)}
+.round-teams{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;flex-wrap:wrap;margin-bottom:.5rem}
+.round-sep{color:var(--text3);font-weight:400}
+.rank-inp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:.5rem}
+.rank-inp-row.two{grid-template-columns:repeat(2,1fr)}
+.ri-box{text-align:center}
+.ri-lbl{font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.ri-sel{width:100%;padding:7px 6px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;font-weight:600;color:var(--text);background:var(--surface);cursor:pointer}
+.ri-sel:focus{outline:none;border-color:var(--accent)}
+.ri-sel.gold{border-color:var(--gold);background:var(--gold-l);color:var(--gold)}
+.ri-sel.silver{border-color:var(--silver);background:var(--silver-l);color:var(--silver)}
+.winner-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.wb-win{background:var(--accent-l);color:var(--accent)}
+.wb-lose{background:var(--surface2);color:var(--text3)}
+.loc-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:12px;margin-left:6px;vertical-align:middle}
+.loc-gym{background:#e0e7ff;color:#3730a3}
+.loc-field{background:#dcfce7;color:#166534}
+.event-icon-wrap{display:flex;align-items:center;gap:14px;margin-bottom:1rem;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r)}
+.event-icon-svg{flex-shrink:0}
+.event-icon-info{}
+.event-icon-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px}
+.event-icon-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.id-group-lbl{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;margin:10px 0 5px}
+.id-btn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:2px}
+.id-btn{padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);transition:all .15s;text-align:left}
+.id-btn:hover{border-color:var(--accent2);color:var(--text)}
+.id-btn.selected{border-color:var(--accent);background:var(--accent-l);color:var(--accent)}
+.id-btn .id-role{font-size:10px;font-weight:400;color:var(--text3);display:block;margin-top:1px}
+.id-btn.selected .id-role{color:var(--accent2)}
+.loc-section{margin-bottom:1rem}
+.loc-section-hd{font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:.4rem .85rem;border-radius:var(--rs);display:inline-flex;align-items:center;gap:6px;margin-bottom:.6rem}
+.loc-gym-hd{background:#e0e7ff;color:#3730a3}
+.loc-field-hd{background:#dcfce7;color:#166534}
+.metrics-group{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.5rem}
+.metric-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.7rem 1rem}
+.metric-sm .m-label{font-size:10px}
+.metric-sm .m-val{font-size:18px}
+.rank-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
 @media(max-width:720px){
   .top-nav{grid-template-columns:1fr;align-items:stretch;padding:.65rem 1rem;gap:4px}
   .nav-logo{text-align:center;font-size:13px;max-width:100%}
@@ -163,12 +203,19 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
   .ggrid{grid-template-columns:repeat(2,1fr)}
   .score-row{grid-template-columns:1fr;gap:8px}
   .score-mid{display:none}
+  /* 종합순위 테이블 모바일 카드형 */
+  .rank-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -1rem;padding:0 1rem}
+  .rtable th:nth-child(n+3):nth-child(-n+10){font-size:10px;padding:5px 6px}
+  .rtable td:nth-child(n+3):nth-child(-n+10){font-size:12px;padding:7px 6px}
+  .rtable th:last-child,.rtable td:last-child{display:none}
+  .loc-section-hd{font-size:12px;padding:.4rem .75rem}
 }
 @media(max-width:420px){
   .metrics{grid-template-columns:1fr}
   .ggrid{grid-template-columns:1fr}
   .nav-logo{font-size:12px}
   .timer-display-mobile{font-size:28px}
+  .metrics-group{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -180,8 +227,14 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
     <div class="nav-logo">🏆 2026 안산강서고 체육한마당</div>
     <div class="nav-tabs">
       <button class="nav-tab on" onclick="dashTab('overview',this)">종합순위</button>
-      <button class="nav-tab" onclick="dashTab('basketball',this)">농구</button>
-      <button class="nav-tab" onclick="dashTab('jumprope',this)">단체줄넘기</button>
+      <button class="nav-tab" onclick="dashTab('basketball',this)">🏀 농구</button>
+      <button class="nav-tab" onclick="dashTab('jumprope',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:2px"><path d="M5 20 Q12 4 19 20"/><circle cx="5" cy="20" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="20" r="2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="3" ry="4" fill="currentColor" stroke="none" opacity=".7"/></svg>줄넘기</button>
+      <button class="nav-tab" onclick="dashTab('airladder',this)">🏃 에어사다리</button>
+      <button class="nav-tab" onclick="dashTab('wavepass',this)">🌊 파도넘기</button>
+      <button class="nav-tab" onclick="dashTab('superman',this)">🦸 슈퍼맨</button>
+      <button class="nav-tab" onclick="dashTab('tugofwar',this)">💪 줄다리기</button>
+      <button class="nav-tab" onclick="dashTab('penaltykick',this)">⚽ 승부차기</button>
+      <button class="nav-tab" onclick="dashTab('relay',this)">🏃‍♂️ 계주</button>
     </div>
     <div class="nav-r">
       <button class="btn-sm" onclick="go('login')">계측관 로그인</button>
@@ -194,41 +247,272 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
         <div>
           <div style="font-size:11px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px" id="timer-label">체육한마당 시작까지</div>
           <div style="font-size:36px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums" id="timer-display" class="timer-display-mobile">--:--:--</div>
+          <div style="font-size:11px;opacity:.7;margin-top:6px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span>👥 현재 접속 <strong id="visitor-online">—</strong>명</span>
+            <span>📊 총 방문 <strong id="visitor-total">—</strong>명</span>
+          </div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;opacity:.7;margin-bottom:4px">
             <span class="sync-dot" id="sync-dot"></span><span id="sync-txt">연결 중...</span>
           </div>
           <div style="font-size:13px;font-weight:600;opacity:.9">2026년 5월 15일</div>
-          <div style="font-size:12px;opacity:.75">09:50 시작 · 15:50 종료</div>
+          <div style="font-size:12px;opacity:.75">09:50 시작</div>
         </div>
       </div>
       <div class="pg-title">종합 순위</div>
-      <div class="pg-sub">농구 승리 10점 · 단체줄넘기 1위 10점 / 2위 9점 / 3위 8점</div>
-      <div class="metrics">
-        <div class="metric"><div class="m-label">총 학급</div><div class="m-val">12반</div></div>
-        <div class="metric"><div class="m-label">농구 완료</div><div class="m-val" id="d-bb">0</div><div class="m-sub">/ 6경기</div></div>
-        <div class="metric"><div class="m-label">줄넘기 완료</div><div class="m-val" id="d-jr">0</div><div class="m-sub">/ 12반</div></div>
-        <div class="metric"><div class="m-label">전체 진행</div><div class="m-val" id="d-prog">0%</div></div>
+      <div class="pg-sub">농구·승부차기 승리 10점 · 에어사다리·파도넘기·계주 1위 10점/2위 9점 · 슈퍼맨·줄다리기 승리 10점 · 단체줄넘기 1위 10점/2위 9점/3위 8점</div>
+
+      <!-- 진행 현황: 체육관 / 운동장 구분 -->
+      <div class="loc-section">
+        <div class="loc-section-hd loc-gym-hd">🏀 체육관 경기</div>
+        <div class="metrics-group">
+          <div class="metric metric-sm"><div class="m-label">농구 완료</div><div class="m-val" id="d-bb">0</div><div class="m-sub">/ 6경기</div></div>
+          <div class="metric metric-sm"><div class="m-label">줄넘기 완료</div><div class="m-val" id="d-jr">0</div><div class="m-sub">/ 12반</div></div>
+          <div class="metric metric-sm"><div class="m-label">체육관 진행</div><div class="m-val" id="d-gym-prog">0%</div></div>
+        </div>
       </div>
+      <div class="loc-section">
+        <div class="loc-section-hd loc-field-hd">⚽ 운동장 경기</div>
+        <div class="metrics-group">
+          <div class="metric metric-sm"><div class="m-label">승부차기</div><div class="m-val" id="d-pk">0</div><div class="m-sub">/ 6경기</div></div>
+          <div class="metric metric-sm"><div class="m-label">에어사다리</div><div class="m-val" id="d-al">0</div><div class="m-sub">/ 3라운드</div></div>
+          <div class="metric metric-sm"><div class="m-label">파도넘기</div><div class="m-val" id="d-wp">0</div><div class="m-sub">/ 3라운드</div></div>
+          <div class="metric metric-sm"><div class="m-label">슈퍼맨</div><div class="m-val" id="d-sm">0</div><div class="m-sub">/ 3라운드</div></div>
+          <div class="metric metric-sm"><div class="m-label">줄다리기</div><div class="m-val" id="d-tw">0</div><div class="m-sub">/ 3라운드</div></div>
+          <div class="metric metric-sm"><div class="m-label">계주</div><div class="m-val" id="d-rl">0</div><div class="m-sub">/ 3라운드</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span style="font-size:12px;color:var(--text2)">운동장 전체 진행</span>
+          <div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden"><div id="d-field-bar" style="height:100%;background:#166534;border-radius:3px;transition:width .4s;width:0%"></div></div>
+          <span style="font-size:12px;font-weight:700;color:#166534" id="d-field-prog">0%</span>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">학급별 점수 현황</div>
-        <table class="rtable"><thead><tr><th>순위</th><th>학급</th><th>농구</th><th>줄넘기</th><th>합계</th><th style="width:130px">진행도</th></tr></thead>
+        <div class="rank-table-wrap">
+        <table class="rtable"><thead><tr><th>순위</th><th>학급</th><th>농구</th><th>줄넘기</th><th>에어사다리</th><th>파도넘기</th><th>슈퍼맨</th><th>줄다리기</th><th>승부차기</th><th>계주</th><th>합계</th><th style="width:90px">진행도</th></tr></thead>
         <tbody id="rank-body"></tbody></table>
+        </div>
       </div>
     </div>
     <div id="dp-basketball" style="display:none">
-      <div class="pg-title">농구 경기 현황</div>
-      <div class="pg-sub">총 6경기 · 골득점 자동 판정 · 승리 시 10점</div>
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="28" cy="28" r="22" fill="#FF8C00" stroke="#E07000" stroke-width="1.5"/>
+            <path d="M28 6 Q28 28 28 50" stroke="#7B3000" stroke-width="1.5" fill="none"/>
+            <path d="M6 28 Q28 28 50 28" stroke="#7B3000" stroke-width="1.5" fill="none"/>
+            <path d="M10 15 Q22 22 22 28 Q22 34 10 41" stroke="#7B3000" stroke-width="1.5" fill="none"/>
+            <path d="M46 15 Q34 22 34 28 Q34 34 46 41" stroke="#7B3000" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">🏀 농구 <span class="loc-tag loc-gym">체육관</span></div>
+          <div class="event-icon-desc">총 6경기 · 골득점 자동 판정 · 승리 시 10점</div>
+        </div>
+      </div>
       <div class="ggrid" id="d-ggrid"></div>
     </div>
     <div id="dp-jumprope" style="display:none">
-      <div class="pg-title">단체 줄넘기 현황</div>
-      <div class="pg-sub">3회 도전 최고기록 기준 · 1위 10점 / 2위 9점 / 3위 8점</div>
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- person -->
+            <circle cx="28" cy="14" r="4" fill="#3C3489"/>
+            <rect x="24" y="19" width="8" height="12" rx="3" fill="#3C3489"/>
+            <line x1="24" y1="22" x2="18" y2="28" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <line x1="32" y1="22" x2="38" y2="28" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <line x1="26" y1="31" x2="23" y2="42" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="31" x2="33" y2="42" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <!-- rope arc -->
+            <path d="M8 38 Q28 10 48 38" stroke="#E07000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="8" cy="38" r="3" fill="#BA7517"/>
+            <circle cx="48" cy="38" r="3" fill="#BA7517"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">단체 줄넘기 <span class="loc-tag loc-gym">체육관</span></div>
+          <div class="event-icon-desc">3회 도전 최고기록 기준 · 1위 10점 / 2위 9점 / 3위 8점</div>
+        </div>
+      </div>
       <div class="card">
         <table class="jtable"><thead><tr><th>학급</th><th>1회</th><th>2회</th><th>3회</th><th>최고기록</th><th>점수</th><th>상태</th></tr></thead>
         <tbody id="d-jtbody"></tbody></table>
       </div>
+    </div>
+    <!-- 에어사다리 -->
+    <div id="dp-airladder" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 3 runners going to cone and back -->
+            <!-- cones -->
+            <polygon points="28,10 32,20 24,20" fill="#E07000"/>
+            <!-- runner 1 -->
+            <circle cx="10" cy="26" r="3" fill="#3C3489"/>
+            <path d="M10 29 L10 38 M7 33 L13 33 M8 38 L10 44 M12 38 L10 44" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- runner 2 -->
+            <circle cx="20" cy="26" r="3" fill="#3C3489" opacity=".7"/>
+            <path d="M20 29 L20 38 M17 33 L23 33 M18 38 L20 44 M22 38 L20 44" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+            <!-- runner 3 -->
+            <circle cx="30" cy="26" r="3" fill="#3C3489" opacity=".45"/>
+            <path d="M30 29 L30 38 M27 33 L33 33 M28 38 L30 44 M32 38 L30 44" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+            <!-- motion arrows -->
+            <path d="M38 20 L44 28 L38 36" stroke="#AFA9EC" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">🏃 에어사다리 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">3팀(한 팀 8명) · 반환점 돌아오는 계주형 경기 · 1위 10점 / 2위 9점</div>
+        </div>
+      </div>
+      <div id="d-airladder-body"></div>
+    </div>
+    <!-- 파도넘기 -->
+    <div id="dp-wavepass" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- two rope holders -->
+            <circle cx="6" cy="34" r="3" fill="#3C3489"/>
+            <circle cx="50" cy="34" r="3" fill="#3C3489"/>
+            <!-- big rod rope sweeping low -->
+            <line x1="6" y1="34" x2="12" y2="46" stroke="#3C3489" stroke-width="1.5"/>
+            <line x1="50" y1="34" x2="44" y2="46" stroke="#3C3489" stroke-width="1.5"/>
+            <line x1="12" y1="46" x2="44" y2="46" stroke="#993C1D" stroke-width="3" stroke-linecap="round"/>
+            <!-- jumpers -->
+            <circle cx="22" cy="26" r="3" fill="#3C3489"/>
+            <path d="M22 29 L20 36 M22 29 L24 36 M19 32 L25 32" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="34" cy="24" r="3" fill="#3C3489" opacity=".7"/>
+            <path d="M34 27 L32 34 M34 27 L36 34 M31 30 L37 30" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+            <!-- wave arc under feet -->
+            <path d="M14 44 Q28 36 42 44" stroke="#AFA9EC" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">🌊 파도넘기 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">두 주자가 대형봉 달린 줄을 발 아래로 이동 · 팀원이 점프하며 피하는 경기 · 1위 10점 / 2위 9점</div>
+        </div>
+      </div>
+      <div id="d-wavepass-body"></div>
+    </div>
+    <!-- 슈퍼맨 -->
+    <div id="dp-superman" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- cloth held taut by two sides -->
+            <rect x="6" y="22" width="20" height="14" rx="1" fill="#AFA9EC" opacity=".5" transform="skewX(-4)"/>
+            <rect x="30" y="22" width="20" height="14" rx="1" fill="#AFA9EC" opacity=".5" transform="skewX(4)"/>
+            <!-- cloth edge lines (people holding) -->
+            <line x1="6" y1="22" x2="6" y2="36" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <line x1="50" y1="22" x2="50" y2="36" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <!-- runner flying above cloth -->
+            <circle cx="28" cy="14" r="3.5" fill="#E07000"/>
+            <path d="M28 17.5 L28 26" stroke="#E07000" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 21 L34 21" stroke="#E07000" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 26 L28 26 L32 26" stroke="#E07000" stroke-width="2" stroke-linecap="round"/>
+            <!-- speed lines -->
+            <line x1="34" y1="12" x2="42" y2="10" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="35" y1="16" x2="44" y2="15" stroke="#AFA9EC" stroke-width="1" stroke-linecap="round"/>
+            <!-- cone at right -->
+            <polygon points="50,38 54,50 46,50" fill="#E07000"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">🦸 슈퍼맨 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">두 반이 대형 천을 팽팽히 펼친 후 · 대표 주자가 천 위를 달려 반환점 돌아오는 경기 · 승리 10점</div>
+        </div>
+      </div>
+      <div id="d-superman-body"></div>
+    </div>
+    <!-- 줄다리기 -->
+    <div id="dp-tugofwar" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- rope -->
+            <line x1="8" y1="28" x2="48" y2="28" stroke="#993C1D" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="28" cy="28" r="4" fill="#BA7517" stroke="#7B3000" stroke-width="1.5"/>
+            <!-- left team (2 people leaning back) -->
+            <circle cx="10" cy="20" r="3.5" fill="#3C3489"/>
+            <path d="M10 23.5 L8 32" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 27 L14 25" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 32 L9 40 M9 32 L7 40" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="18" cy="21" r="3.5" fill="#3C3489" opacity=".7"/>
+            <path d="M18 24.5 L16 33" stroke="#3C3489" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+            <!-- right team -->
+            <circle cx="46" cy="20" r="3.5" fill="#A32D2D"/>
+            <path d="M46 23.5 L48 32" stroke="#A32D2D" stroke-width="2" stroke-linecap="round"/>
+            <path d="M50 27 L42 25" stroke="#A32D2D" stroke-width="2" stroke-linecap="round"/>
+            <path d="M49 32 L47 40 M47 32 L49 40" stroke="#A32D2D" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="38" cy="21" r="3.5" fill="#A32D2D" opacity=".7"/>
+            <path d="M38 24.5 L40 33" stroke="#A32D2D" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">💪 줄다리기 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">연합팀 3라운드 · 양쪽에서 줄을 당기는 대결 · 승리 10점</div>
+        </div>
+      </div>
+      <div id="d-tugofwar-body"></div>
+    </div>
+    <!-- 승부차기 -->
+    <div id="dp-penaltykick" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- goal post -->
+            <rect x="10" y="14" width="36" height="22" rx="1" stroke="#5F5E5A" stroke-width="2" fill="none"/>
+            <line x1="10" y1="14" x2="10" y2="44" stroke="#5F5E5A" stroke-width="2" stroke-linecap="round"/>
+            <line x1="46" y1="14" x2="46" y2="44" stroke="#5F5E5A" stroke-width="2" stroke-linecap="round"/>
+            <!-- net lines -->
+            <line x1="22" y1="14" x2="22" y2="36" stroke="#ccc" stroke-width="1"/>
+            <line x1="34" y1="14" x2="34" y2="36" stroke="#ccc" stroke-width="1"/>
+            <line x1="10" y1="25" x2="46" y2="25" stroke="#ccc" stroke-width="1"/>
+            <!-- ball in net -->
+            <circle cx="28" cy="30" r="5" fill="#222" stroke="#fff" stroke-width="1"/>
+            <path d="M25 27 L28 30 L31 27 M28 30 L28 35" stroke="#fff" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">⚽ 승부차기 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">총 6경기 학급 대항 · 승리 시 10점</div>
+        </div>
+      </div>
+      <div class="ggrid" id="d-pk-ggrid"></div>
+    </div>
+    <!-- 계주 -->
+    <div id="dp-relay" style="display:none">
+      <div class="event-icon-wrap">
+        <div class="event-icon-svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- runner 1 passing baton -->
+            <circle cx="14" cy="16" r="4" fill="#3C3489"/>
+            <path d="M14 20 L12 30" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 24 L18 22" stroke="#3C3489" stroke-width="2" stroke-linecap="round"/>
+            <path d="M11 30 L13 40 M13 30 L15 40" stroke="#3C3489" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- baton -->
+            <line x1="20" y1="22" x2="30" y2="20" stroke="#E07000" stroke-width="3" stroke-linecap="round"/>
+            <!-- runner 2 receiving -->
+            <circle cx="36" cy="14" r="4" fill="#A32D2D"/>
+            <path d="M36 18 L34 28" stroke="#A32D2D" stroke-width="2" stroke-linecap="round"/>
+            <path d="M30 20 L42 20" stroke="#A32D2D" stroke-width="2" stroke-linecap="round"/>
+            <path d="M32 28 L34 38 M36 28 L38 38" stroke="#A32D2D" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- speed lines -->
+            <line x1="40" y1="10" x2="50" y2="8" stroke="#AFA9EC" stroke-width="2" stroke-linecap="round"/>
+            <line x1="42" y1="16" x2="52" y2="15" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="41" y1="22" x2="50" y2="22" stroke="#AFA9EC" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="event-icon-info">
+          <div class="event-icon-title">🏃‍♂️ 계주 <span class="loc-tag loc-field">운동장</span></div>
+          <div class="event-icon-desc">3라운드 · 1R: 1~4반 / 2R: 5~8반 / 3R: 9~12반 · 1위 10점 / 2위 9점</div>
+        </div>
+      </div>
+      <div id="d-relay-body"></div>
     </div>
   </div>
   <div style="border-top:1px solid var(--border);padding:.75rem 1.5rem;text-align:center;font-size:11px;color:var(--text3);background:var(--surface);flex-shrink:0">
@@ -239,15 +523,17 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
 <!-- LOGIN -->
 <div id="sc-login" class="screen">
   <div class="login-center">
-    <div class="lbox">
+    <div class="lbox" style="width:400px;max-width:96vw">
       <div class="l-icon">🔐</div>
       <div class="l-title">계측관 로그인</div>
-      <div class="l-sub">배정된 아이디와 비밀번호를 입력하세요</div>
+      <div class="l-sub">아이디를 선택하고 비밀번호를 입력하세요</div>
       <div class="ferr" id="lerr">아이디 또는 비밀번호가 올바르지 않습니다.</div>
-      <label class="flabel">아이디</label>
-      <input class="finput" id="lid" type="text" placeholder="asgs01 / asgs02 / asgs03" autocomplete="username">
+
+      <!-- ID 선택 카드 -->
+      <div id="login-groups" style="margin-bottom:14px"></div>
+
       <label class="flabel">비밀번호</label>
-      <input class="finput" id="lpw" type="password" placeholder="비밀번호" autocomplete="current-password">
+      <input class="finput" id="lpw" type="password" placeholder="비밀번호 입력" autocomplete="current-password">
       <button class="fbtn" onclick="doLogin()">로그인</button>
       <div style="margin-top:1rem;text-align:center">
         <button onclick="go('dash')" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer">← 대시보드로 돌아가기</button>
@@ -269,6 +555,12 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var
       <span class="reset-actions" id="reset-actions">
         <button class="btn-sm btn-red" onclick="resetSection('basketball')">농구 초기화</button>
         <button class="btn-sm btn-red" onclick="resetSection('jumprope')">줄넘기 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('airladder')">에어사다리 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('wavepass')">파도넘기 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('superman')">슈퍼맨 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('tugofwar')">줄다리기 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('penaltykick')">승부차기 초기화</button>
+        <button class="btn-sm btn-red" onclick="resetSection('relay')">계주 초기화</button>
       </span>
       <button class="btn-sm" onclick="doLogout()" style="color:var(--text2)">로그아웃</button>
     </div>
@@ -335,28 +627,70 @@ const stateRef = db.ref('sportsDay2026/state');
 // ACCOUNTS
 // =====================
 const USERS = {
-  asgs01:{name:'농구 계측관 (asgs01)', can:['basketball']},
-  asgs02:{name:'줄넘기 계측관 (asgs02)', can:['jumprope']},
-  asgs03:{name:'총괄 계측관 (asgs03)', can:['basketball','jumprope']},
+  asgs01:{name:'체육관 계측관 A (asgs01)', role:'gym', can:['basketball']},
+  asgs02:{name:'체육관 계측관 B (asgs02)', role:'gym', can:['jumprope']},
+  asgs03:{name:'마스터 (asgs03)', role:'master', can:['basketball','jumprope','airladder','wavepass','superman','tugofwar','penaltykick','relay']},
+  asgs04:{name:'운동장 계측관 A (asgs04)', role:'field', can:['airladder','wavepass','superman','tugofwar','penaltykick','relay']},
+  asgs05:{name:'운동장 계측관 B (asgs05)', role:'field', can:['airladder','wavepass','superman','tugofwar','penaltykick','relay']},
+  asgs06:{name:'운동장 계측관 C (asgs06)', role:'field', can:['airladder','wavepass','superman','tugofwar','penaltykick','relay']},
+  asgs07:{name:'운동장 계측관 D (asgs07)', role:'field', can:['airladder','wavepass','superman','tugofwar','penaltykick','relay']},
 };
-const PASSWORDS = {
-  asgs01:'1988',
-  asgs02:'1988',
-  asgs03:'3702',
-};
+const PASSWORDS = {asgs01:'1988',asgs02:'1988',asgs03:'3702',asgs04:'17189',asgs05:'17189',asgs06:'17189',asgs07:'17189'};
+const LOGIN_OPTIONS=[
+  {group:'🏀 체육관 경기', ids:['asgs01','asgs02']},
+  {group:'⚽ 운동장 경기', ids:['asgs04','asgs05','asgs06','asgs07']},
+  {group:'👑 마스터', ids:['asgs03']},
+];
 
 // =====================
 // LOCAL STATE (synced from Firebase)
 // =====================
+// Round-based event helpers
+// airladder, wavepass, relay: 3 rounds, each has 4 teams, rank 1=10pt, 2=9pt
+// superman, tugofwar: 3 rounds, each is 2-team match, winner=10pt
+// penaltykick: 6 matches, winner=10pt
+
+function emptyRound4(){return {rank1:null,rank2:null,done:false};} // 4팀 중 1위,2위 (반 index 0-based)
+function emptyMatchResult(){return {winner:null,done:false};} // 2팀 매치 승자 index (0 or 1)
+function emptyPKGame(){return {winner:null,done:false};}
+
 function emptyBballGame(){
   return {teamA:null,teamB:null,scoreA:null,scoreB:null,winner:null,done:false};
 }
 function emptyJumpRecord(){
   return {r1:null,r2:null,r3:null,done:false};
 }
+
+// Static event configs
+const ROUND4_ROUNDS = {
+  airladder:[[0,1,2,3],[4,5,6,7],[8,9,10,11]],
+  wavepass:[[0,1,2,3],[4,5,6,7],[8,9,10,11]],
+  relay:[[0,1,2,3],[4,5,6,7],[8,9,10,11]],
+};
+const MATCH_ROUNDS = {
+  superman:[[[0,6],[1,7]],[[2,8],[4,10]],[[5,11],[3,9]]],
+  // 1R: 1반+7반 vs 2반+8반 → idx [0,6] vs [1,7]
+  // 2R: 3반+9반 vs 5반+11반 → [2,8] vs [4,10]
+  // 3R: 6반+12반 vs 4반+10반 → [5,11] vs [3,9]
+  tugofwar:[[[0,6],[2,8]],[[1,7],[4,10]],[[3,9],[5,11]]],
+  // 1R: 1반+7반 vs 3반+9반 → [0,6] vs [2,8]
+  // 2R: 2반+8반 vs 5반+11반 → [1,7] vs [4,10]
+  // 3R: 4반+10반 vs 6반+12반 → [3,9] vs [5,11]
+};
+const PK_MATCHES = [
+  [0,5],[10,11],[2,9],[4,7],[8,6],[1,3]
+  // 1반vs6반, 11반vs12반, 3반vs10반, 5반vs8반, 9반vs7반, 2반vs4반
+];
+
 let state = {
   bball: Array.from({length:6}, emptyBballGame),
   jump:  Array.from({length:12}, emptyJumpRecord),
+  airladder: Array.from({length:3}, emptyRound4),
+  wavepass:  Array.from({length:3}, emptyRound4),
+  relay:     Array.from({length:3}, emptyRound4),
+  superman:  Array.from({length:3}, emptyMatchResult),
+  tugofwar:  Array.from({length:3}, emptyMatchResult),
+  penaltykick: Array.from({length:6}, emptyPKGame),
 };
 
 let curUser=null, curOpTab='basketball', curGameIdx=0;
@@ -369,21 +703,25 @@ let ctxA=null, ctxB=null, drgA=false, drgB=false;
 stateRef.on('value', snap => {
   const data = snap.val();
   if (data) {
-    // Merge Firebase data into local state
     if (data.bball) {
       data.bball.forEach((g, i) => { if (g) state.bball[i] = {...emptyBballGame(), ...g}; });
     }
     if (data.jump) {
       data.jump.forEach((j, i) => { if (j) state.jump[i] = {...emptyJumpRecord(), ...j}; });
     }
+    ['airladder','wavepass','relay'].forEach(key=>{
+      if(data[key]) data[key].forEach((r,i)=>{if(r) state[key][i]={...emptyRound4(),...r};});
+    });
+    ['superman','tugofwar'].forEach(key=>{
+      if(data[key]) data[key].forEach((r,i)=>{if(r) state[key][i]={...emptyMatchResult(),...r};});
+    });
+    if(data.penaltykick) data.penaltykick.forEach((r,i)=>{if(r) state.penaltykick[i]={...emptyPKGame(),...r};});
   }
-  // Update sync indicator
   const dot = document.getElementById('sync-dot');
   const txt = document.getElementById('sync-txt');
   if (dot) { dot.classList.add('live'); }
   if (txt) { txt.textContent = '실시간 연결됨'; }
   refreshDash();
-  // If operator is open, re-render
   if (document.getElementById('sc-op').classList.contains('on')) {
     renderOp();
   }
@@ -413,6 +751,12 @@ function saveState() {
   return stateRef.set({
     bball: state.bball,
     jump: state.jump,
+    airladder: state.airladder,
+    wavepass: state.wavepass,
+    relay: state.relay,
+    superman: state.superman,
+    tugofwar: state.tugofwar,
+    penaltykick: state.penaltykick,
     updatedAt: Date.now()
   }).catch(e => toast('저장 오류: ' + e.message));
 }
@@ -424,15 +768,69 @@ function go(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById('sc-'+name).classList.add('on');
   if (name==='dash') refreshDash();
+  if (name==='login') { renderLoginGroups(); document.getElementById('lpw').value=''; document.getElementById('lerr').style.display='none'; }
 }
+
+// =====================
+// VISITOR TRACKING
+// =====================
+(function(){
+  const visitorRef = db.ref('sportsDay2026/visitors');
+  const onlineRef = db.ref('sportsDay2026/online');
+  // Total visit count (increment once per session)
+  const sessionKey = 'asgs_visited_' + new Date().toDateString();
+  if (!sessionStorage.getItem(sessionKey)) {
+    sessionStorage.setItem(sessionKey, '1');
+    visitorRef.transaction(v => (v||0)+1);
+  }
+  // Online presence
+  const myRef = onlineRef.push({t: Date.now()});
+  myRef.onDisconnect().remove();
+  // Listen to total visitors
+  visitorRef.on('value', snap => {
+    const el = document.getElementById('visitor-total');
+    if (el) el.textContent = snap.val() || 0;
+  });
+  // Listen to online count
+  onlineRef.on('value', snap => {
+    const el = document.getElementById('visitor-online');
+    if (el) el.textContent = snap.numChildren() || 0;
+  });
+})();
 
 // =====================
 // AUTH
 // =====================
+let selectedLoginId = null;
+
+function renderLoginGroups() {
+  const wrap = document.getElementById('login-groups');
+  if (!wrap) return;
+  let html = '';
+  LOGIN_OPTIONS.forEach(({group, ids}) => {
+    html += `<div class="id-group-lbl">${group}</div><div class="id-btn-grid">`;
+    ids.forEach(id => {
+      const u = USERS[id];
+      const roleLabel = u.role==='gym'?'체육관':u.role==='field'?'운동장':'마스터';
+      html += `<button class="id-btn" onclick="selectLoginId('${id}',this)"><strong>${id}</strong><span class="id-role">${roleLabel}</span></button>`;
+    });
+    html += `</div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function selectLoginId(id, el) {
+  selectedLoginId = id;
+  document.querySelectorAll('.id-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('lpw').focus();
+}
+
 function doLogin() {
-  const id = document.getElementById('lid').value.trim().toLowerCase();
+  const id = selectedLoginId;
   const pw = document.getElementById('lpw').value;
   const err = document.getElementById('lerr');
+  if (!id) { err.textContent = '아이디를 선택해주세요.'; err.style.display='block'; return; }
   if (USERS[id] && pw===PASSWORDS[id]) {
     err.style.display='none';
     curUser = {id, ...USERS[id]};
@@ -441,20 +839,28 @@ function doLogin() {
     go('op');
     renderOp();
   } else {
+    err.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
     err.style.display='block';
   }
 }
 function doLogout() {
   curUser = null;
-  document.getElementById('lid').value='';
+  selectedLoginId = null;
   document.getElementById('lpw').value='';
+  renderLoginGroups();
   go('dash');
 }
 
 function emptyState() {
   return {
     bball: Array.from({length:6}, emptyBballGame),
-    jump:  Array.from({length:12}, emptyJumpRecord)
+    jump:  Array.from({length:12}, emptyJumpRecord),
+    airladder: Array.from({length:3}, emptyRound4),
+    wavepass:  Array.from({length:3}, emptyRound4),
+    relay:     Array.from({length:3}, emptyRound4),
+    superman:  Array.from({length:3}, emptyMatchResult),
+    tugofwar:  Array.from({length:3}, emptyMatchResult),
+    penaltykick: Array.from({length:6}, emptyPKGame),
   };
 }
 
@@ -463,7 +869,8 @@ function resetSection(type) {
     toast('총괄 계측관(asgs03)만 초기화할 수 있습니다.');
     return;
   }
-  const label = type === 'basketball' ? '농구' : '단체줄넘기';
+  const labels = {basketball:'농구',jumprope:'단체줄넘기',airladder:'에어사다리',wavepass:'파도넘기',superman:'슈퍼맨',tugofwar:'줄다리기',penaltykick:'승부차기',relay:'계주'};
+  const label = labels[type]||type;
   const ok = confirm(`${label} 입력값만 초기화할까요? 이 작업은 되돌릴 수 없습니다.`);
   if (!ok) return;
 
@@ -472,6 +879,12 @@ function resetSection(type) {
     curGameIdx = findNextGame();
   } else if (type === 'jumprope') {
     state.jump = Array.from({length:12}, emptyJumpRecord);
+  } else if (['airladder','wavepass','relay'].includes(type)) {
+    state[type] = Array.from({length:3}, emptyRound4);
+  } else if (['superman','tugofwar'].includes(type)) {
+    state[type] = Array.from({length:3}, emptyMatchResult);
+  } else if (type === 'penaltykick') {
+    state.penaltykick = Array.from({length:6}, emptyPKGame);
   }
   saveState().then(() => {
     refreshDash();
@@ -507,42 +920,114 @@ function getJumpScores() {
   return {sc, bests};
 }
 
+// 에어사다리/파도넘기/계주: 라운드별 1위10점 2위9점
+function getRound4Scores(key) {
+  const sc = new Array(12).fill(0);
+  const rounds = ROUND4_ROUNDS[key];
+  state[key].forEach((r,ri)=>{
+    if(!r.done) return;
+    const teams = rounds[ri];
+    if(r.rank1!=null) sc[teams[r.rank1]]+=10;
+    if(r.rank2!=null) sc[teams[r.rank2]]+=9;
+  });
+  return sc;
+}
+
+// 슈퍼맨/줄다리기: 연합팀 매치, 승리 팀원 각 10점
+function getMatchScores(key) {
+  const sc = new Array(12).fill(0);
+  const rounds = MATCH_ROUNDS[key];
+  state[key].forEach((r,ri)=>{
+    if(!r.done||r.winner==null) return;
+    const winTeam = rounds[ri][r.winner]; // e.g. [0,6]
+    winTeam.forEach(ci=>sc[ci]+=10);
+  });
+  return sc;
+}
+
+// 승부차기
+function getPKScores() {
+  const sc = new Array(12).fill(0);
+  state.penaltykick.forEach((r,ri)=>{
+    if(!r.done||r.winner==null) return;
+    sc[PK_MATCHES[ri][r.winner]]+=10;
+  });
+  return sc;
+}
+
 // =====================
 // DASHBOARD
 // =====================
+const ALL_TABS = ['overview','basketball','jumprope','airladder','wavepass','superman','tugofwar','penaltykick','relay'];
 function dashTab(name, el) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
-  ['overview','basketball','jumprope'].forEach(n => {
-    document.getElementById('dp-'+n).style.display = n===name?'block':'none';
+  ALL_TABS.forEach(n => {
+    const dp = document.getElementById('dp-'+n);
+    if(dp) dp.style.display = n===name?'block':'none';
   });
   refreshDash();
 }
 
 function refreshDash() {
   const {sc:jsc, bests} = getJumpScores();
+  const alSc = getRound4Scores('airladder');
+  const wpSc = getRound4Scores('wavepass');
+  const rlSc = getRound4Scores('relay');
+  const smSc = getMatchScores('superman');
+  const twSc = getMatchScores('tugofwar');
+  const pkSc = getPKScores();
+
   const bbDone = state.bball.filter(g=>g.done).length;
   const jrDone = state.jump.filter(j=>j.done).length;
-  const prog = Math.round(bbDone/6*50 + jrDone/12*50);
-  setTxt('d-bb', bbDone); setTxt('d-jr', jrDone); setTxt('d-prog', prog+'%');
+  const alDone = state.airladder.filter(r=>r.done).length;
+  const wpDone = state.wavepass.filter(r=>r.done).length;
+  const rlDone = state.relay.filter(r=>r.done).length;
+  const smDone = state.superman.filter(r=>r.done).length;
+  const twDone = state.tugofwar.filter(r=>r.done).length;
+  const pkDone = state.penaltykick.filter(r=>r.done).length;
+
+  const gymTotal = 6+12, gymDone = bbDone+jrDone;
+  const fieldTotal = 6+3+3+3+3+3, fieldDone = pkDone+alDone+wpDone+smDone+twDone+rlDone;
+  const gymProg = Math.round(gymDone/gymTotal*100);
+  const fieldProg = Math.round(fieldDone/fieldTotal*100);
+
+  setTxt('d-bb', bbDone); setTxt('d-jr', jrDone);
+  setTxt('d-gym-prog', gymProg+'%');
+  setTxt('d-pk', pkDone); setTxt('d-al', alDone); setTxt('d-wp', wpDone);
+  setTxt('d-sm', smDone); setTxt('d-tw', twDone); setTxt('d-rl', rlDone);
+  setTxt('d-field-prog', fieldProg+'%');
+  const fieldBar = document.getElementById('d-field-bar');
+  if(fieldBar) fieldBar.style.width = fieldProg+'%';
+
+  const totalEvents = gymTotal+fieldTotal;
+  const doneCount = gymDone+fieldDone;
+  const prog = Math.round(doneCount/totalEvents*100);
+  setTxt('d-prog', prog+'%');
 
   const cls = Array.from({length:12}, (_,i)=>({
-    i, name:`${i+1}반`, bb:bbScore(i), jr:jsc[i],
-    total:bbScore(i)+jsc[i], best:bests[i]
+    i, name:`${i+1}반`,
+    bb:bbScore(i), jr:jsc[i],
+    al:alSc[i], wp:wpSc[i], rl:rlSc[i],
+    sm:smSc[i], tw:twSc[i], pk:pkSc[i],
+    total:bbScore(i)+jsc[i]+alSc[i]+wpSc[i]+rlSc[i]+smSc[i]+twSc[i]+pkSc[i],
   })).sort((a,b)=>b.total-a.total);
 
-  // Rank table
+  const maxTotal = 10+10+10+10+10+10+10+10; // 80점 만점
   const tbody = document.getElementById('rank-body');
   if (tbody) tbody.innerHTML = cls.map((c,rank)=>{
     const rb = rank===0?'r1':rank===1?'r2':rank===2?'r3':'rn';
     const rl = rank===0?'🥇':rank===1?'🥈':rank===2?'🥉':`${rank+1}`;
-    const fp = Math.round(c.total/20*100);
+    const fp = Math.round(c.total/maxTotal*100);
     return `<tr>
       <td><span class="rbadge ${rb}">${rl}</span></td>
       <td style="font-weight:600">${c.name}</td>
       <td>${c.bb}점</td><td>${c.jr}점</td>
+      <td>${c.al}점</td><td>${c.wp}점</td>
+      <td>${c.sm}점</td><td>${c.tw}점</td>
+      <td>${c.pk}점</td><td>${c.rl}점</td>
       <td style="font-weight:700;color:var(--accent)">${c.total}점</td>
-      <td><div class="sbar"><div class="sfill" style="width:${fp}%"></div></div><span style="font-size:11px;color:var(--text3)">${c.total}/20점</span></td>
+      <td><div class="sbar"><div class="sfill" style="width:${fp}%"></div></div><span style="font-size:11px;color:var(--text3)">${c.total}/${maxTotal}점</span></td>
     </tr>`;
   }).join('');
 
@@ -579,6 +1064,70 @@ function refreshDash() {
       <td><span class="tag ${j.done?'tdone':'tpend'}">${j.done?'완료':'대기'}</span></td>
     </tr>`;
   }).join('');
+
+  // 에어사다리/파도넘기/계주 render
+  ['airladder','wavepass','relay'].forEach(key=>{
+    const el=document.getElementById('d-'+key+'-body');
+    if(!el)return;
+    const rounds=ROUND4_ROUNDS[key];
+    el.innerHTML=state[key].map((r,ri)=>{
+      const teams=rounds[ri];
+      const teamNames=teams.map(ci=>`${ci+1}반`);
+      const fin=r.done;
+      return `<div class="round-card">
+        <div class="round-hd">
+          <div class="round-title">${ri+1}라운드 — ${teamNames.join(' · ')}</div>
+          <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span>
+        </div>
+        ${fin?`<div style="font-size:13px;color:var(--text2)">
+          🥇 1위: <strong>${r.rank1!=null?teamNames[r.rank1]:'?'}</strong>
+          &nbsp;|&nbsp; 🥈 2위: <strong>${r.rank2!=null?teamNames[r.rank2]:'?'}</strong>
+        </div>`:'<div style="font-size:12px;color:var(--text3)">결과 미입력</div>'}
+      </div>`;
+    }).join('');
+  });
+
+  // 슈퍼맨/줄다리기 render
+  ['superman','tugofwar'].forEach(key=>{
+    const el=document.getElementById('d-'+key+'-body');
+    if(!el)return;
+    const rounds=MATCH_ROUNDS[key];
+    el.innerHTML=state[key].map((r,ri)=>{
+      const [teamA,teamB]=rounds[ri];
+      const nameA=teamA.map(ci=>`${ci+1}반`).join('+');
+      const nameB=teamB.map(ci=>`${ci+1}반`).join('+');
+      const fin=r.done;
+      const winName=fin&&r.winner!=null?(r.winner===0?nameA:nameB):'?';
+      return `<div class="round-card">
+        <div class="round-hd">
+          <div class="round-title">${ri+1}라운드</div>
+          <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span>
+        </div>
+        <div class="round-teams">
+          <span class="${fin&&r.winner===0?'gc-win':''}">${nameA}</span>
+          <span class="round-sep">vs</span>
+          <span class="${fin&&r.winner===1?'gc-win':''}">${nameB}</span>
+        </div>
+        ${fin?`<div style="font-size:13px;color:var(--text2)">🏆 승리: <strong>${winName}</strong></div>`:'<div style="font-size:12px;color:var(--text3)">결과 미입력</div>'}
+      </div>`;
+    }).join('');
+  });
+
+  // 승부차기 render
+  const pkGg=document.getElementById('d-pk-ggrid');
+  if(pkGg) pkGg.innerHTML=state.penaltykick.map((r,ri)=>{
+    const [ciA,ciB]=PK_MATCHES[ri];
+    const fin=r.done;
+    return `<div class="gcard ${fin?'fin':''}">
+      <div class="gc-lbl">경기 ${ri+1} <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span></div>
+      <div class="gc-teams">
+        <span class="${fin&&r.winner===0?'gc-win':''}">${ciA+1}반</span>
+        <span class="gc-vs">vs</span>
+        <span class="${fin&&r.winner===1?'gc-win':''}">${ciB+1}반</span>
+      </div>
+      ${fin?`<div class="gc-res">승자: ${r.winner===0?ciA+1:ciB+1}반</div>`:''}
+    </div>`;
+  }).join('');
 }
 
 // =====================
@@ -586,61 +1135,87 @@ function refreshDash() {
 // =====================
 function downloadExcel() {
   const {sc:jsc, bests} = getJumpScores();
+  const alSc=getRound4Scores('airladder'),wpSc=getRound4Scores('wavepass'),rlSc=getRound4Scores('relay');
+  const smSc=getMatchScores('superman'),twSc=getMatchScores('tugofwar'),pkSc=getPKScores();
   const rankMap={};
   bests.map((v,i)=>({v,i})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).forEach((x,r)=>rankMap[x.i]=r+1);
 
   const cls = Array.from({length:12},(_,i)=>({
-    i, bb:bbScore(i), jr:jsc[i], total:bbScore(i)+jsc[i]
+    i, bb:bbScore(i), jr:jsc[i], al:alSc[i], wp:wpSc[i], sm:smSc[i], tw:twSc[i], pk:pkSc[i], rl:rlSc[i],
+    total:bbScore(i)+jsc[i]+alSc[i]+wpSc[i]+smSc[i]+twSc[i]+pkSc[i]+rlSc[i]
   })).sort((a,b)=>b.total-a.total);
 
   const wb = XLSX.utils.book_new();
 
   // Sheet 1: 종합순위
-  const overall = [
-    ['순위','학급','농구 점수','줄넘기 점수','합계']
-  ];
+  const overall = [['순위','학급','농구','줄넘기','에어사다리','파도넘기','슈퍼맨','줄다리기','승부차기','계주','합계']];
   cls.forEach((c,rank) => {
-    overall.push([rank+1, `${c.i+1}반`, c.bb, c.jr, c.total]);
+    overall.push([rank+1, `${c.i+1}반`, c.bb, c.jr, c.al, c.wp, c.sm, c.tw, c.pk, c.rl, c.total]);
   });
   const ws1 = XLSX.utils.aoa_to_sheet(overall);
-  ws1['!cols'] = [{wch:6},{wch:8},{wch:10},{wch:12},{wch:8}];
+  ws1['!cols'] = [{wch:6},{wch:8},{wch:8},{wch:8},{wch:10},{wch:10},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8}];
   XLSX.utils.book_append_sheet(wb, ws1, '종합순위');
 
   // Sheet 2: 농구 결과
-  const bbRows = [['경기','팀 A','팀 A 골득점','팀 B 골득점','팀 B','승자','농구점수(A)','농구점수(B)']];
+  const bbRows = [['경기','팀 A','팀 A 골득점','팀 B 골득점','팀 B','승자']];
   state.bball.forEach((g,gi) => {
     const tA = g.teamA!=null?`${g.teamA+1}반`:'미정';
     const tB = g.teamB!=null?`${g.teamB+1}반`:'미정';
     const w = g.done?(g.winner===0?tA:tB):'미완료';
-    bbRows.push([
-      `경기 ${gi+1}`, tA,
-      g.scoreA??'', g.scoreB??'',
-      tB, w,
-      g.done&&g.winner===0?10:0,
-      g.done&&g.winner===1?10:0
-    ]);
+    bbRows.push([`경기 ${gi+1}`, tA, g.scoreA??'', g.scoreB??'', tB, w]);
   });
   const ws2 = XLSX.utils.aoa_to_sheet(bbRows);
-  ws2['!cols'] = [{wch:8},{wch:8},{wch:12},{wch:12},{wch:8},{wch:8},{wch:12},{wch:12}];
-  XLSX.utils.book_append_sheet(wb, ws2, '농구결과');
+  XLSX.utils.book_append_sheet(wb, ws2, '농구');
 
-  // Sheet 3: 줄넘기 결과
+  // Sheet 3: 단체줄넘기
   const jrRows = [['학급','1회','2회','3회','최고기록','순위','점수']];
   Array.from({length:12},(_,ci)=>{
-    const j = state.jump[ci];
-    const vs = [j.r1,j.r2,j.r3].filter(x=>x!=null).map(Number);
-    const best = vs.length ? Math.max(...vs) : null;
-    const r = rankMap[ci];
-    const sc = r===1?10:r===2?9:r===3?8:j.done?0:'';
-    jrRows.push([
-      `${ci+1}반`,
-      j.r1??'', j.r2??'', j.r3??'',
-      best??'', r?`${r}위`:'', sc
-    ]);
+    const j=state.jump[ci];
+    const vs=[j.r1,j.r2,j.r3].filter(x=>x!=null).map(Number);
+    const best=vs.length?Math.max(...vs):null;
+    const r=rankMap[ci];
+    const sc=r===1?10:r===2?9:r===3?8:j.done?0:'';
+    jrRows.push([`${ci+1}반`, j.r1??'', j.r2??'', j.r3??'', best??'', r?`${r}위`:'', sc]);
   });
   const ws3 = XLSX.utils.aoa_to_sheet(jrRows);
-  ws3['!cols'] = [{wch:8},{wch:6},{wch:6},{wch:6},{wch:10},{wch:6},{wch:6}];
-  XLSX.utils.book_append_sheet(wb, ws3, '줄넘기결과');
+  XLSX.utils.book_append_sheet(wb, ws3, '단체줄넘기');
+
+  // Sheets: 에어사다리/파도넘기/계주
+  [{key:'airladder',name:'에어사다리'},{key:'wavepass',name:'파도넘기'},{key:'relay',name:'계주'}].forEach(({key,name})=>{
+    const rows=[[`라운드`,`참가반`,`1위`,`2위`,`1위 점수`,`2위 점수`]];
+    ROUND4_ROUNDS[key].forEach((teams,ri)=>{
+      const r=state[key][ri];
+      const teamNames=teams.map(ci=>`${ci+1}반`);
+      rows.push([`${ri+1}R`, teamNames.join(', '),
+        r.rank1!=null?teamNames[r.rank1]:'', r.rank2!=null?teamNames[r.rank2]:'',
+        r.done&&r.rank1!=null?10:'', r.done&&r.rank2!=null?9:''
+      ]);
+    });
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  });
+
+  // Sheets: 슈퍼맨/줄다리기
+  [{key:'superman',name:'슈퍼맨'},{key:'tugofwar',name:'줄다리기'}].forEach(({key,name})=>{
+    const rows=[['라운드','팀A','팀B','승자']];
+    MATCH_ROUNDS[key].forEach((teams,ri)=>{
+      const r=state[key][ri];
+      const nameA=teams[0].map(ci=>`${ci+1}반`).join('+');
+      const nameB=teams[1].map(ci=>`${ci+1}반`).join('+');
+      rows.push([`${ri+1}R`, nameA, nameB, r.done&&r.winner!=null?(r.winner===0?nameA:nameB):'미완료']);
+    });
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  });
+
+  // Sheet: 승부차기
+  const pkRows=[['경기','팀A','팀B','승자']];
+  PK_MATCHES.forEach(([ciA,ciB],ri)=>{
+    const r=state.penaltykick[ri];
+    pkRows.push([`경기 ${ri+1}`, `${ciA+1}반`, `${ciB+1}반`, r.done&&r.winner!=null?(r.winner===0?`${ciA+1}반`:`${ciB+1}반`):'미완료']);
+  });
+  const wsPK=XLSX.utils.aoa_to_sheet(pkRows);
+  XLSX.utils.book_append_sheet(wb, wsPK, '승부차기');
 
   XLSX.writeFile(wb, `안산강서고_체육한마당_2026_${new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','')}.xlsx`);
   toast('📥 엑셀 파일이 다운로드되었습니다!');
@@ -655,16 +1230,20 @@ function renderOp() {
   if (resetActions) resetActions.style.display = curUser.id === 'asgs03' ? 'inline-flex' : 'none';
   const tabs = document.getElementById('op-tabs');
   tabs.innerHTML = '';
+  const tabLabels = {basketball:'농구',jumprope:'단체줄넘기',airladder:'에어사다리',wavepass:'파도넘기',superman:'슈퍼맨',tugofwar:'줄다리기',penaltykick:'승부차기',relay:'계주'};
   curUser.can.forEach(type => {
     const b = document.createElement('button');
     b.className = 'op-tab'+(curOpTab===type?' on':'');
-    b.textContent = type==='basketball'?'농구':'단체줄넘기';
+    b.textContent = tabLabels[type]||type;
     b.onclick = ()=>{ curOpTab=type; if(type==='basketball') curGameIdx=findNextGame(); renderOp(); };
     tabs.appendChild(b);
   });
   const body = document.getElementById('op-body');
   if (curOpTab==='basketball') { body.innerHTML=renderBbOp(); bindBbEvents(); }
-  else { body.innerHTML=renderJrOp(); bindJrEvents(); }
+  else if (curOpTab==='jumprope') { body.innerHTML=renderJrOp(); bindJrEvents(); }
+  else if (['airladder','wavepass','relay'].includes(curOpTab)) { body.innerHTML=renderRound4Op(curOpTab); }
+  else if (['superman','tugofwar'].includes(curOpTab)) { body.innerHTML=renderMatchOp(curOpTab); }
+  else if (curOpTab==='penaltykick') { body.innerHTML=renderPKOp(); }
 }
 
 // ---- BASKETBALL ----
@@ -850,6 +1429,185 @@ function renderJrOp(){
   return html;
 }
 function bindJrEvents(){for(let ci=0;ci<12;ci++) calcBest(ci);}
+
+// ---- ROUND4 (에어사다리/파도넘기/계주) ----
+const ROUND4_NAMES = {airladder:'에어사다리',wavepass:'파도넘기',relay:'계주'};
+function renderRound4Op(key){
+  const label=ROUND4_NAMES[key];
+  const rounds=ROUND4_ROUNDS[key];
+  const done=state[key].filter(r=>r.done).length;
+  let html=`<div class="prog-bar">
+    <div class="prog-head">
+      <div class="prog-title">${label} 진행 현황</div>
+      <span class="remain-pill ${done===3?'zero':''}">${done===3?'모든 라운드 완료':'남은 라운드 '+(3-done)+'경기'}</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${done/3*100}%"></div></div>
+    <div class="prog-steps">
+      ${[0,1,2].map(i=>{const fin=state[key][i].done,isCur=!fin&&state[key].slice(0,i).every(r=>r.done);return `<div class="step-dot ${fin?'fin':isCur?'cur':''}">${i+1}</div>`;}).join('')}
+    </div>
+  </div>`;
+  state[key].forEach((r,ri)=>{
+    const teams=rounds[ri];
+    const teamNames=teams.map(ci=>`${ci+1}반`);
+    if(r.done){
+      html+=`<div class="card"><div class="card-title">${ri+1}라운드 — ${teamNames.join(' · ')} <span class="tag tdone">완료</span></div>
+        <div class="done-box">✅ 1위: ${r.rank1!=null?teamNames[r.rank1]:'?'} &nbsp;|&nbsp; 2위: ${r.rank2!=null?teamNames[r.rank2]:'?'}</div>
+      </div>`;
+    } else {
+      html+=`<div class="cur-game"><div class="cur-game-hd"><span>${ri+1}라운드 결과 입력</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:.75rem">참가 반: <strong>${teamNames.join(', ')}</strong></div>
+        <div class="rank-inp-row">
+          ${[0,1,2,3].map(pos=>`<div class="ri-box">
+            <div class="ri-lbl">${['🥇 1위','🥈 2위','3위','4위'][pos]}</div>
+            <select class="ri-sel ${pos===0?'gold':pos===1?'silver':''}" id="${key}-r${ri}-p${pos}" onchange="onRound4Change('${key}',${ri})">
+              <option value="">선택</option>
+              ${teamNames.map((n,ti)=>`<option value="${ti}">${n}</option>`).join('')}
+            </select>
+          </div>`).join('')}
+        </div>
+        <div id="${key}-r${ri}-warn" style="font-size:12px;color:var(--red);margin-bottom:.5rem;display:none">같은 순위에 같은 반을 선택할 수 없습니다.</div>
+        <button class="sbtn" id="${key}-r${ri}-sub" onclick="submitRound4('${key}',${ri})" disabled>입력 완료 — 서명 진행</button>
+      </div>`;
+    }
+  });
+  return html;
+}
+function onRound4Change(key,ri){
+  const vals=[0,1,2,3].map(pos=>{const el=document.getElementById(`${key}-r${ri}-p${pos}`);return el&&el.value!==''?parseInt(el.value):null;});
+  const warn=document.getElementById(`${key}-r${ri}-warn`);
+  const sub=document.getElementById(`${key}-r${ri}-sub`);
+  // Check duplicate for rank1 and rank2 at minimum
+  const r1=vals[0],r2=vals[1];
+  const hasDup = (vals.filter(v=>v!=null).length !== new Set(vals.filter(v=>v!=null)).size);
+  if(warn) warn.style.display=hasDup?'block':'none';
+  if(sub) sub.disabled = !(r1!=null&&r2!=null&&!hasDup);
+}
+function submitRound4(key,ri){
+  if(state[key][ri].done){toast('이미 입력된 라운드입니다.');return;}
+  const vals=[0,1,2,3].map(pos=>{const el=document.getElementById(`${key}-r${ri}-p${pos}`);return el&&el.value!==''?parseInt(el.value):null;});
+  const r1=vals[0],r2=vals[1];
+  if(r1==null||r2==null){toast('1위와 2위는 반드시 선택해야 합니다.');return;}
+  const teams=ROUND4_ROUNDS[key][ri];
+  sigPend={type:'round4',key,ri,rank1:r1,rank2:r2,label:ROUND4_NAMES[key],teams:teams.map(ci=>`${ci+1}반`)};
+  openSig();
+}
+
+// ---- MATCH (슈퍼맨/줄다리기) ----
+const MATCH_NAMES = {superman:'슈퍼맨',tugofwar:'줄다리기'};
+function renderMatchOp(key){
+  const label=MATCH_NAMES[key];
+  const rounds=MATCH_ROUNDS[key];
+  const done=state[key].filter(r=>r.done).length;
+  let html=`<div class="prog-bar">
+    <div class="prog-head">
+      <div class="prog-title">${label} 진행 현황</div>
+      <span class="remain-pill ${done===3?'zero':''}">${done===3?'모든 라운드 완료':'남은 라운드 '+(3-done)+'경기'}</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${done/3*100}%"></div></div>
+  </div>`;
+  state[key].forEach((r,ri)=>{
+    const [teamA,teamB]=rounds[ri];
+    const nameA=teamA.map(ci=>`${ci+1}반`).join('+');
+    const nameB=teamB.map(ci=>`${ci+1}반`).join('+');
+    if(r.done){
+      const wn=r.winner===0?nameA:nameB;
+      html+=`<div class="card"><div class="card-title">${ri+1}라운드 <span class="tag tdone">완료</span></div>
+        <div style="font-size:13px;color:var(--text2)">${nameA} <strong>vs</strong> ${nameB}</div>
+        <div class="done-box" style="margin-top:.5rem">🏆 승리: ${wn}</div>
+      </div>`;
+    } else {
+      html+=`<div class="cur-game"><div class="cur-game-hd"><span>${ri+1}라운드 결과 입력</span></div>
+        <div class="win-row">
+          <div class="wteam">
+            <div class="wname">${nameA}</div>
+            <button class="wbtn" id="${key}-r${ri}-w0" onclick="selectMatchWinner('${key}',${ri},0)">승리</button>
+          </div>
+          <div class="wvs">VS</div>
+          <div class="wteam">
+            <div class="wname">${nameB}</div>
+            <button class="wbtn" id="${key}-r${ri}-w1" onclick="selectMatchWinner('${key}',${ri},1)">승리</button>
+          </div>
+        </div>
+        <button class="sbtn" id="${key}-r${ri}-sub" onclick="submitMatch('${key}',${ri})" disabled>입력 완료 — 서명 진행</button>
+      </div>`;
+    }
+  });
+  return html;
+}
+let matchWinners={};
+function selectMatchWinner(key,ri,w){
+  matchWinners[`${key}-${ri}`]=w;
+  const btn0=document.getElementById(`${key}-r${ri}-w0`);
+  const btn1=document.getElementById(`${key}-r${ri}-w1`);
+  const sub=document.getElementById(`${key}-r${ri}-sub`);
+  if(btn0) btn0.className='wbtn'+(w===0?' win':' lose');
+  if(btn1) btn1.className='wbtn'+(w===1?' win':' lose');
+  if(sub) sub.disabled=false;
+}
+function submitMatch(key,ri){
+  const w=matchWinners[`${key}-${ri}`];
+  if(w==null){toast('승리 팀을 선택해주세요.');return;}
+  const [teamA,teamB]=MATCH_ROUNDS[key][ri];
+  const nameA=teamA.map(ci=>`${ci+1}반`).join('+');
+  const nameB=teamB.map(ci=>`${ci+1}반`).join('+');
+  sigPend={type:'match',key,ri,winner:w,label:MATCH_NAMES[key],teamA:nameA,teamB:nameB};
+  openSig();
+}
+
+// ---- PENALTY KICK (승부차기) ----
+function renderPKOp(){
+  const done=state.penaltykick.filter(r=>r.done).length;
+  const remain=6-done;
+  let html=`<div class="prog-bar">
+    <div class="prog-head">
+      <div class="prog-title">승부차기 진행 현황</div>
+      <span class="remain-pill ${remain===0?'zero':''}">${remain===0?'모든 경기 완료':'남은 경기 '+remain+'경기'}</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${done/6*100}%"></div></div>
+    <div class="prog-steps">${[0,1,2,3,4,5].map(i=>{const fin=state.penaltykick[i].done;return `<div class="step-dot ${fin?'fin':''}">${i+1}</div>`;}).join('')}</div>
+  </div>`;
+  state.penaltykick.forEach((r,ri)=>{
+    const [ciA,ciB]=PK_MATCHES[ri];
+    if(r.done){
+      html+=`<div class="card"><div class="card-title">경기 ${ri+1}: ${ciA+1}반 vs ${ciB+1}반 <span class="tag tdone">완료</span></div>
+        <div class="done-box">🏆 승리: ${r.winner===0?ciA+1:ciB+1}반</div>
+      </div>`;
+    } else {
+      html+=`<div class="cur-game"><div class="cur-game-hd"><span>경기 ${ri+1} 결과 입력</span></div>
+        <div class="win-row">
+          <div class="wteam">
+            <div class="wname">${ciA+1}반</div>
+            <button class="wbtn" id="pk-r${ri}-w0" onclick="selectPKWinner(${ri},0)">승리</button>
+          </div>
+          <div class="wvs">VS</div>
+          <div class="wteam">
+            <div class="wname">${ciB+1}반</div>
+            <button class="wbtn" id="pk-r${ri}-w1" onclick="selectPKWinner(${ri},1)">승리</button>
+          </div>
+        </div>
+        <button class="sbtn" id="pk-r${ri}-sub" onclick="submitPK(${ri})" disabled>입력 완료 — 서명 진행</button>
+      </div>`;
+    }
+  });
+  return html;
+}
+let pkWinners={};
+function selectPKWinner(ri,w){
+  pkWinners[ri]=w;
+  const btn0=document.getElementById(`pk-r${ri}-w0`);
+  const btn1=document.getElementById(`pk-r${ri}-w1`);
+  const sub=document.getElementById(`pk-r${ri}-sub`);
+  if(btn0) btn0.className='wbtn'+(w===0?' win':' lose');
+  if(btn1) btn1.className='wbtn'+(w===1?' win':' lose');
+  if(sub) sub.disabled=false;
+}
+function submitPK(ri){
+  const w=pkWinners[ri];
+  if(w==null){toast('승리 팀을 선택해주세요.');return;}
+  const [ciA,ciB]=PK_MATCHES[ri];
+  sigPend={type:'penaltykick',ri,winner:w,teamA:`${ciA+1}반`,teamB:`${ciB+1}반`};
+  openSig();
+}
 function calcBest(ci){
   const vs=[1,2,3].map(r=>{const el=document.getElementById(`jr-${ci}-${r}`);return el&&el.value!==''?parseInt(el.value):null;}).filter(x=>x!=null);
   const el=document.getElementById(`jbest-${ci}`);
@@ -871,9 +1629,20 @@ function openSig(){
   if(d.type==='basketball'){
     sub=`경기 ${d.gi+1}: ${d.teamA} ${d.scoreA??'-'} : ${d.scoreB??'-'} ${d.teamB} · 승자: ${d.winner===0?d.teamA:d.teamB}`;
     la=`${d.teamA} 주장 서명`;lb=`${d.teamB} 주장 서명`;
-  } else {
+  } else if(d.type==='jumprope') {
     sub=`${d.ci+1}반 단체줄넘기 기록 확인`;
     la=`${d.ci+1}반 대표 서명`;lb=`계측관 확인 서명`;
+  } else if(d.type==='round4') {
+    sub=`${d.label} ${d.ri+1}라운드 · 1위: ${d.teams[d.rank1]} · 2위: ${d.teams[d.rank2]}`;
+    la=`1위 팀(${d.teams[d.rank1]}) 대표 서명`;lb=`계측관 확인 서명`;
+  } else if(d.type==='match') {
+    const wn=d.winner===0?d.teamA:d.teamB;
+    sub=`${d.label} ${d.ri+1}라운드 · ${d.teamA} vs ${d.teamB} · 승자: ${wn}`;
+    la=`승리팀(${wn}) 대표 서명`;lb=`계측관 확인 서명`;
+  } else if(d.type==='penaltykick') {
+    const wn=d.winner===0?d.teamA:d.teamB;
+    sub=`승부차기 경기 ${d.ri+1}: ${d.teamA} vs ${d.teamB} · 승자: ${wn}`;
+    la=`${d.teamA} 주장 서명`;lb=`${d.teamB} 주장 서명`;
   }
   setTxt('sig-sub',sub);setTxt('sig-la',la);setTxt('sig-lb',lb);
   sigA=false;sigB=false;
@@ -924,11 +1693,16 @@ function confirmSig(){
     state.bball[d.gi].winner=d.winner;
     state.bball[d.gi].done=true;
     curGameIdx=findNextGame();
-  } else {
+  } else if(d.type==='jumprope') {
     state.jump[d.ci]={r1:d.r1,r2:d.r2,r3:d.r3,done:true};
+  } else if(d.type==='round4') {
+    state[d.key][d.ri]={rank1:d.rank1,rank2:d.rank2,done:true};
+  } else if(d.type==='match') {
+    state[d.key][d.ri]={winner:d.winner,done:true};
+  } else if(d.type==='penaltykick') {
+    state.penaltykick[d.ri]={winner:d.winner,done:true};
   }
   document.getElementById('sig-ov').classList.remove('open');
-  // Save to Firebase → triggers real-time update for all viewers
   saveState();
   renderOp();
   toast('✅ Firebase에 저장 완료! 모든 화면에 실시간 반영됩니다.');
@@ -939,15 +1713,20 @@ function confirmSig(){
 // =====================
 (function(){
   const START=new Date('2026-05-15T09:50:00');
-  const END=new Date('2026-05-15T15:50:00');
   function pad(n){return String(n).padStart(2,'0');}
   function fmtHMS(s){return `${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;}
   function tick(){
     const now=new Date(),disp=document.getElementById('timer-display'),lbl=document.getElementById('timer-label'),banner=document.getElementById('timer-banner');
     if(!disp)return;
-    if(now<START){disp.textContent=fmtHMS(Math.ceil((START-now)/1000));lbl.textContent='체육한마당 시작까지';banner.style.background='var(--accent)';}
-    else if(now<=END){disp.textContent=fmtHMS(Math.floor((now-START)/1000));lbl.textContent='체육한마당 진행 중 · 경과 시간';banner.style.background='var(--green)';}
-    else{disp.textContent='종료';lbl.textContent='체육한마당이 종료되었습니다';banner.style.background='var(--text3)';}
+    if(now<START){
+      disp.textContent=fmtHMS(Math.ceil((START-now)/1000));
+      lbl.textContent='체육한마당 시작까지';
+      banner.style.background='var(--accent)';
+    } else {
+      disp.textContent=fmtHMS(Math.floor((now-START)/1000));
+      lbl.textContent='체육한마당 진행 중 · 경과 시간';
+      banner.style.background='var(--green)';
+    }
   }
   tick();setInterval(tick,1000);
 })();
@@ -964,6 +1743,8 @@ function toast(msg){
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('on'))doLogin();
 });
+// Init login groups on page load
+renderLoginGroups();
 </script>
 </body>
 </html>
