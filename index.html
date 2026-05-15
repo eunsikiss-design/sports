@@ -1809,6 +1809,727 @@ function toast(msg){
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('on'))doLogin();
 });
+
+
+// =====================
+// LIVE PATCH: 에어사다리 4개 우승반 + 퀴즈 + 보너스 점수
+// =====================
+(function(){
+  const CLASS_COUNT = 12;
+  const AIRLADDER_WINNER_COUNT = 4;
+  const QUIZ_WINNER_COUNT = 9;
+
+  function uniqueClassList(list, maxCount){
+    const out=[];
+    (Array.isArray(list)?list:[]).forEach(v=>{
+      const n=Number(v);
+      if(Number.isInteger(n) && n>=0 && n<CLASS_COUNT && !out.includes(n)) out.push(n);
+    });
+    return maxCount ? out.slice(0,maxCount) : out;
+  }
+  function className(ci){ return `${Number(ci)+1}반`; }
+  function classListText(list){ return uniqueClassList(list).map(className).join(', ') || '미선택'; }
+  function emptyAirladder(){ return {winners:[], done:false}; }
+  function emptyQuiz(){ return {winners:[], done:false}; }
+  function normalizeQuizObj(q){
+    const obj = q && typeof q==='object' ? q : emptyQuiz();
+    return {winners: uniqueClassList(obj.winners, QUIZ_WINNER_COUNT), done: !!obj.done};
+  }
+  function getAirladderWinners(){
+    const a = state.airladder;
+    if(Array.isArray(a)){
+      if(a[0] && Array.isArray(a[0].winners)) return uniqueClassList(a[0].winners, AIRLADDER_WINNER_COUNT);
+      // 기존 3라운드 방식 데이터가 남아 있으면 각 라운드 1위만 임시 반영
+      const migrated=[];
+      a.forEach((r,ri)=>{
+        if(!r || !r.done || r.rank1==null) return;
+        const teams = ROUND4_ROUNDS.airladder[ri] || [];
+        const ci = teams[Number(r.rank1)];
+        if(Number.isInteger(ci) && !migrated.includes(ci)) migrated.push(ci);
+      });
+      return uniqueClassList(migrated, AIRLADDER_WINNER_COUNT);
+    }
+    if(a && typeof a==='object') return uniqueClassList(a.winners, AIRLADDER_WINNER_COUNT);
+    return [];
+  }
+  function isAirladderDone(){
+    const a = state.airladder;
+    if(Array.isArray(a) && a[0] && Array.isArray(a[0].winners)) return !!a[0].done;
+    if(a && typeof a==='object' && Array.isArray(a.winners)) return !!a.done;
+    return getAirladderWinners().length >= AIRLADDER_WINNER_COUNT;
+  }
+  function setAirladderWinners(winners, done){
+    state.airladder = [
+      {winners: uniqueClassList(winners, AIRLADDER_WINNER_COUNT), done: !!done},
+      emptyRound4(),
+      emptyRound4()
+    ];
+  }
+  function getQuizWinners(){
+    if(!state.quiz) state.quiz = emptyQuiz();
+    state.quiz = normalizeQuizObj(state.quiz);
+    return state.quiz.winners;
+  }
+  function setQuizWinners(winners, done){
+    state.quiz = {winners: uniqueClassList(winners, QUIZ_WINNER_COUNT), done: !!done};
+  }
+  function getBonusEntries(){
+    if(!Array.isArray(state.bonus)) state.bonus = [];
+    state.bonus = state.bonus.map((b,idx)=>({
+      ci: Number(b.ci),
+      points: Number(b.points),
+      memo: b.memo || '',
+      ts: b.ts || Date.now(),
+      id: b.id || `bonus-${idx}-${b.ts || Date.now()}`
+    })).filter(b=>Number.isInteger(b.ci)&&b.ci>=0&&b.ci<CLASS_COUNT&&Number.isFinite(b.points));
+    return state.bonus;
+  }
+
+  function ensureSpecialUI(){
+    const nav = document.querySelector('#sc-dash .nav-tabs');
+    if(nav && !document.getElementById('nav-quiz-tab')){
+      nav.insertAdjacentHTML('beforeend', `
+        <span style="display:inline-flex;align-items:center;padding:0 6px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px;height:20px;margin:8px 4px">✨특별점수</span>
+        <button class="nav-tab" id="nav-quiz-tab" onclick="dashTab('quiz',this)">🧠 퀴즈</button>
+        <button class="nav-tab" id="nav-bonus-tab" onclick="dashTab('bonus',this)">⭐ 보너스</button>`);
+    }
+
+    const wrap = document.querySelector('#sc-dash .wrap');
+    const relay = document.getElementById('dp-relay');
+    if(wrap && relay && !document.getElementById('dp-quiz')){
+      relay.insertAdjacentHTML('afterend', `
+        <div id="dp-quiz" style="display:none">
+          <div class="event-icon-wrap">
+            <div class="event-icon-svg" style="font-size:44px;line-height:56px;width:56px;text-align:center">🧠</div>
+            <div class="event-icon-info">
+              <div class="event-icon-title">퀴즈 <span class="loc-tag loc-field">특별점수</span></div>
+              <div class="event-icon-desc">9개 학급 선택 · 선택 학급 각 10점</div>
+            </div>
+          </div>
+          <div id="d-quiz-body"></div>
+        </div>
+        <div id="dp-bonus" style="display:none">
+          <div class="event-icon-wrap">
+            <div class="event-icon-svg" style="font-size:44px;line-height:56px;width:56px;text-align:center">⭐</div>
+            <div class="event-icon-info">
+              <div class="event-icon-title">보너스 점수 <span class="loc-tag loc-field">특별점수</span></div>
+              <div class="event-icon-desc">학급별 임의 점수 입력 · 여러 번 부여 가능</div>
+            </div>
+          </div>
+          <div id="d-bonus-body"></div>
+        </div>`);
+    }
+
+    const pgSub = document.querySelector('#dp-overview .pg-sub');
+    if(pgSub) pgSub.textContent = '농구·승부차기 승리 10점 · 에어사다리 1등 4개반 각 10점 · 파도넘기·계주 1위 10점/2위 9점 · 슈퍼맨·줄다리기 승리 10점 · 단체줄넘기 1위 10점/2위 9점/3위 8점 · 퀴즈 9개 학급 각 10점 · 보너스 점수 별도 반영';
+
+    const alSub = document.querySelector('#d-al')?.nextElementSibling;
+    if(alSub) alSub.textContent = '/ 4학급';
+
+    const fieldMetrics = document.querySelector('.loc-field-hd')?.nextElementSibling;
+    if(fieldMetrics && !document.getElementById('d-qz')){
+      fieldMetrics.insertAdjacentHTML('beforeend', `
+        <div class="metric metric-sm"><div class="m-label">퀴즈</div><div class="m-val" id="d-qz">0</div><div class="m-sub">/ 9학급</div></div>
+        <div class="metric metric-sm"><div class="m-label">보너스</div><div class="m-val" id="d-bo">0</div><div class="m-sub">건</div></div>`);
+    }
+
+    const airDesc = document.querySelector('#dp-airladder .event-icon-desc');
+    if(airDesc) airDesc.textContent = '1등 학급 4개반 선택 · 선택 학급 각 10점';
+  }
+
+  function ensureStateExtensions(){
+    if(!Array.isArray(state.airladder)) setAirladderWinners(getAirladderWinners(), isAirladderDone());
+    if(!state.quiz) state.quiz = emptyQuiz();
+    state.quiz = normalizeQuizObj(state.quiz);
+    if(!Array.isArray(state.bonus)) state.bonus = [];
+    getBonusEntries();
+  }
+
+  function addCan(id, items){
+    if(!USERS[id]) return;
+    items.forEach(item=>{ if(!USERS[id].can.includes(item)) USERS[id].can.push(item); });
+  }
+  addCan('asgs03', ['quiz','bonus']);
+  ['asgs04','asgs05','asgs06','asgs07'].forEach(id=>addCan(id, ['quiz']));
+
+  const originalStateListenerRef = stateRef;
+  originalStateListenerRef.on('value', snap => {
+    const data = snap.val() || {};
+    if(data.quiz) state.quiz = normalizeQuizObj(data.quiz);
+    else if(!state.quiz) state.quiz = emptyQuiz();
+    state.bonus = Array.isArray(data.bonus) ? data.bonus : [];
+    getBonusEntries();
+    if(document.readyState !== 'loading'){
+      ensureSpecialUI();
+      refreshDash();
+      if(document.getElementById('sc-op')?.classList.contains('on')) renderOp();
+    }
+  });
+
+  saveState = function() {
+    ensureStateExtensions();
+    return stateRef.set({
+      bball: state.bball,
+      jump: state.jump,
+      airladder: state.airladder,
+      wavepass: state.wavepass,
+      relay: state.relay,
+      superman: state.superman,
+      tugofwar: state.tugofwar,
+      penaltykick: state.penaltykick,
+      quiz: state.quiz,
+      bonus: state.bonus,
+      updatedAt: Date.now()
+    }).catch(e => toast('저장 오류: ' + e.message));
+  };
+
+  resetSection = function(type) {
+    if (!curUser || curUser.id !== 'asgs03') {
+      toast('총괄 계측관(asgs03)만 초기화할 수 있습니다.');
+      return;
+    }
+    const labels = {basketball:'농구',jumprope:'단체줄넘기',airladder:'에어사다리',wavepass:'파도넘기',superman:'슈퍼맨',tugofwar:'줄다리기',penaltykick:'승부차기',relay:'계주',quiz:'퀴즈',bonus:'보너스 점수'};
+    const label = labels[type]||type;
+    const ok = confirm(`${label} 입력값만 초기화할까요? 이 작업은 되돌릴 수 없습니다.`);
+    if (!ok) return;
+
+    if (type === 'basketball') {
+      state.bball = Array.from({length:6}, emptyBballGame);
+      curGameIdx = findNextGame();
+    } else if (type === 'jumprope') {
+      state.jump = Array.from({length:12}, emptyJumpRecord);
+    } else if (type === 'airladder') {
+      setAirladderWinners([], false);
+    } else if (['wavepass','relay'].includes(type)) {
+      state[type] = Array.from({length:3}, emptyRound4);
+    } else if (['superman','tugofwar'].includes(type)) {
+      state[type] = Array.from({length:3}, emptyMatchResult);
+    } else if (type === 'penaltykick') {
+      state.penaltykick = Array.from({length:6}, emptyPKGame);
+    } else if (type === 'quiz') {
+      setQuizWinners([], false);
+    } else if (type === 'bonus') {
+      state.bonus = [];
+    }
+    saveState().then(() => {
+      refreshDash();
+      renderOp();
+      toast(`✅ ${label} 입력값이 초기화되었습니다.`);
+    });
+  };
+
+  function getAirladderScores(){
+    const sc = new Array(CLASS_COUNT).fill(0);
+    getAirladderWinners().forEach(ci=>{ sc[ci] += 10; });
+    return sc;
+  }
+  getRound4Scores = function(key) {
+    if(key === 'airladder') return getAirladderScores();
+    const sc = new Array(CLASS_COUNT).fill(0);
+    const rounds = ROUND4_ROUNDS[key];
+    state[key].forEach((r,ri)=>{
+      if(!r.done) return;
+      const teams = rounds[ri];
+      if(r.rank1!=null) sc[teams[r.rank1]]+=10;
+      if(r.rank2!=null) sc[teams[r.rank2]]+=9;
+    });
+    return sc;
+  };
+  window.getQuizScores = function(){
+    const sc = new Array(CLASS_COUNT).fill(0);
+    getQuizWinners().forEach(ci=>{ sc[ci] += 10; });
+    return sc;
+  };
+  window.getBonusScores = function(){
+    const sc = new Array(CLASS_COUNT).fill(0);
+    getBonusEntries().forEach(b=>{ sc[b.ci] += Number(b.points)||0; });
+    return sc;
+  };
+
+  refreshDash = function() {
+    ensureSpecialUI();
+    ensureStateExtensions();
+    const {sc:jsc, bests} = getJumpScores();
+    const alSc = getRound4Scores('airladder');
+    const wpSc = getRound4Scores('wavepass');
+    const rlSc = getRound4Scores('relay');
+    const smSc = getMatchScores('superman');
+    const twSc = getMatchScores('tugofwar');
+    const pkSc = getPKScores();
+    const qzSc = getQuizScores();
+    const boSc = getBonusScores();
+
+    const bbDone = state.bball.filter(g=>g.done).length;
+    const jrDone = state.jump.filter(j=>j.done).length;
+    const alDone = getAirladderWinners().length;
+    const wpDone = state.wavepass.filter(r=>r.done).length;
+    const rlDone = state.relay.filter(r=>r.done).length;
+    const smDone = state.superman.filter(r=>r.done).length;
+    const twDone = state.tugofwar.filter(r=>r.done).length;
+    const pkDone = state.penaltykick.filter(r=>r.done).length;
+    const qzDone = getQuizWinners().length;
+    const boDone = getBonusEntries().length;
+
+    const gymTotal = 6+12, gymDone = bbDone+jrDone;
+    const fieldTotal = 6+1+3+3+3+3+1;
+    const fieldDone = pkDone+(alDone>=AIRLADDER_WINNER_COUNT?1:0)+wpDone+smDone+twDone+rlDone+(qzDone>=QUIZ_WINNER_COUNT?1:0);
+    const gymProg = Math.round(gymDone/gymTotal*100);
+    const fieldProg = Math.round(fieldDone/fieldTotal*100);
+
+    setTxt('d-bb', bbDone); setTxt('d-jr', jrDone);
+    setTxt('d-gym-prog', gymProg+'%');
+    setTxt('d-pk', pkDone); setTxt('d-al', alDone); setTxt('d-wp', wpDone);
+    setTxt('d-sm', smDone); setTxt('d-tw', twDone); setTxt('d-rl', rlDone);
+    setTxt('d-qz', qzDone); setTxt('d-bo', boDone);
+    setTxt('d-field-prog', fieldProg+'%');
+    const fieldBar = document.getElementById('d-field-bar');
+    if(fieldBar) fieldBar.style.width = fieldProg+'%';
+
+    const totalEvents = gymTotal+fieldTotal;
+    const doneCount = gymDone+fieldDone;
+    const prog = Math.round(doneCount/totalEvents*100);
+    setTxt('d-prog', prog+'%');
+
+    const cls = Array.from({length:CLASS_COUNT}, (_,i)=>({
+      i, name:`${i+1}반`,
+      bb:bbScore(i), jr:jsc[i],
+      al:alSc[i], wp:wpSc[i], rl:rlSc[i],
+      sm:smSc[i], tw:twSc[i], pk:pkSc[i],
+      qz:qzSc[i], bo:boSc[i],
+      total:bbScore(i)+jsc[i]+alSc[i]+wpSc[i]+rlSc[i]+smSc[i]+twSc[i]+pkSc[i]+qzSc[i]+boSc[i],
+    })).sort((a,b)=>b.total-a.total);
+
+    const rankHead = document.querySelector('#rank-body')?.closest('table')?.querySelector('thead tr');
+    if(rankHead){
+      rankHead.innerHTML = '<th>순위</th><th>학급</th><th>농구</th><th>줄넘기</th><th>에어사다리</th><th>파도넘기</th><th>슈퍼맨</th><th>줄다리기</th><th>승부차기</th><th>계주</th><th>퀴즈</th><th>보너스</th><th>합계</th><th style="width:90px">진행도</th>';
+    }
+    const baseMaxTotal = 90;
+    const maxTotal = Math.max(baseMaxTotal, ...cls.map(c=>c.total));
+    const tbody = document.getElementById('rank-body');
+    if (tbody) tbody.innerHTML = cls.map((c,rank)=>{
+      const rb = rank===0?'r1':rank===1?'r2':rank===2?'r3':'rn';
+      const rl = rank===0?'🥇':rank===1?'🥈':rank===2?'🥉':`${rank+1}`;
+      const fp = Math.max(0, Math.min(100, Math.round(c.total/maxTotal*100)));
+      return `<tr>
+        <td><span class="rbadge ${rb}">${rl}</span></td>
+        <td style="font-weight:600">${c.name}</td>
+        <td>${c.bb}점</td><td>${c.jr}점</td>
+        <td>${c.al}점</td><td>${c.wp}점</td>
+        <td>${c.sm}점</td><td>${c.tw}점</td>
+        <td>${c.pk}점</td><td>${c.rl}점</td>
+        <td>${c.qz}점</td><td>${c.bo}점</td>
+        <td style="font-weight:700;color:var(--accent)">${c.total}점</td>
+        <td><div class="sbar"><div class="sfill" style="width:${fp}%"></div></div><span style="font-size:11px;color:var(--text3)">${c.total}/${maxTotal}점</span></td>
+      </tr>`;
+    }).join('');
+
+    const gg = document.getElementById('d-ggrid');
+    if (gg) gg.innerHTML = state.bball.map((g,gi)=>{
+      const fin=g.done;
+      const tA=g.teamA!=null?`${g.teamA+1}반`:'미정';
+      const tB=g.teamB!=null?`${g.teamB+1}반`:'미정';
+      return `<div class="gcard ${fin?'fin':''}">
+        <div class="gc-lbl">경기 ${gi+1} <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span></div>
+        <div class="gc-teams">
+          <span class="${fin&&g.winner===0?'gc-win':''}">${tA}</span>
+          <span class="gc-vs">${fin&&g.scoreA!=null&&g.scoreB!=null?`${g.scoreA} : ${g.scoreB}`:'vs'}</span>
+          <span class="${fin&&g.winner===1?'gc-win':''}">${tB}</span>
+        </div>
+        ${fin?`<div class="gc-res">승자: ${g.winner===0?tA:tB}${g.scoreA!=null&&g.scoreB!=null?` · 골득점 ${g.scoreA}:${g.scoreB}`:''}</div>`:''}
+      </div>`;
+    }).join('');
+
+    const rankMap={};
+    bests.map((v,i)=>({v,i})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).forEach((x,r)=>rankMap[x.i]=r+1);
+    const jt = document.getElementById('d-jtbody');
+    if (jt) jt.innerHTML = Array.from({length:CLASS_COUNT},(_,ci)=>{
+      const j=state.jump[ci]; const r=rankMap[ci];
+      const sc = r===1?'10점':r===2?'9점':r===3?'8점':j.done?'0점':'-';
+      const rb = r===1?'r1 rbadge':r===2?'r2 rbadge':r===3?'r3 rbadge':'';
+      return `<tr>
+        <td style="font-weight:600">${ci+1}반</td>
+        <td>${j.r1??'-'}</td><td>${j.r2??'-'}</td><td>${j.r3??'-'}</td>
+        <td style="font-weight:700;color:var(--accent)">${bests[ci]!=null?bests[ci]+'회':'-'}</td>
+        <td>${rb?`<span class="${rb}">${sc}</span>`:sc}</td>
+        <td><span class="tag ${j.done?'tdone':'tpend'}">${j.done?'완료':'대기'}</span></td>
+      </tr>`;
+    }).join('');
+
+    const alBody = document.getElementById('d-airladder-body');
+    if(alBody){
+      const winners = getAirladderWinners();
+      alBody.innerHTML = `<div class="round-card">
+        <div class="round-hd">
+          <div class="round-title">에어사다리 1등 학급 4개반</div>
+          <span class="tag ${winners.length>=AIRLADDER_WINNER_COUNT?'tdone':'tpend'}">${winners.length>=AIRLADDER_WINNER_COUNT?'완료':'대기'}</span>
+        </div>
+        ${winners.length?`<div style="font-size:13px;color:var(--text2)">🏆 10점 부여: <strong>${classListText(winners)}</strong></div>`:'<div style="font-size:12px;color:var(--text3)">결과 미입력</div>'}
+      </div>`;
+    }
+
+    ['wavepass','relay'].forEach(key=>{
+      const el=document.getElementById('d-'+key+'-body');
+      if(!el)return;
+      const rounds=ROUND4_ROUNDS[key];
+      el.innerHTML=state[key].map((r,ri)=>{
+        const teams=rounds[ri];
+        const teamNames=teams.map(ci=>`${ci+1}반`);
+        const fin=r.done;
+        return `<div class="round-card">
+          <div class="round-hd">
+            <div class="round-title">${ri+1}라운드 — ${teamNames.join(' · ')}</div>
+            <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span>
+          </div>
+          ${fin?`<div style="font-size:13px;color:var(--text2)">
+            🥇 1위: <strong>${r.rank1!=null?teamNames[r.rank1]:'?'}</strong>
+            &nbsp;|&nbsp; 🥈 2위: <strong>${r.rank2!=null?teamNames[r.rank2]:'?'}</strong>
+          </div>`:'<div style="font-size:12px;color:var(--text3)">결과 미입력</div>'}
+        </div>`;
+      }).join('');
+    });
+
+    ['superman','tugofwar'].forEach(key=>{
+      const el=document.getElementById('d-'+key+'-body');
+      if(!el)return;
+      const rounds=MATCH_ROUNDS[key];
+      el.innerHTML=state[key].map((r,ri)=>{
+        const [teamA,teamB]=rounds[ri];
+        const nameA=teamA.map(ci=>`${ci+1}반`).join('+');
+        const nameB=teamB.map(ci=>`${ci+1}반`).join('+');
+        const fin=r.done;
+        const winName=fin&&r.winner!=null?(r.winner===0?nameA:nameB):'?';
+        return `<div class="round-card">
+          <div class="round-hd">
+            <div class="round-title">${ri+1}라운드</div>
+            <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span>
+          </div>
+          <div class="round-teams">
+            <span class="${fin&&r.winner===0?'gc-win':''}">${nameA}</span>
+            <span class="round-sep">vs</span>
+            <span class="${fin&&r.winner===1?'gc-win':''}">${nameB}</span>
+          </div>
+          ${fin?`<div style="font-size:13px;color:var(--text2)">🏆 승리: <strong>${winName}</strong></div>`:'<div style="font-size:12px;color:var(--text3)">결과 미입력</div>'}
+        </div>`;
+      }).join('');
+    });
+
+    const pkGg=document.getElementById('d-pk-ggrid');
+    if(pkGg) pkGg.innerHTML=state.penaltykick.map((r,ri)=>{
+      const [ciA,ciB]=PK_MATCHES[ri];
+      const fin=r.done;
+      return `<div class="gcard ${fin?'fin':''}">
+        <div class="gc-lbl">경기 ${ri+1} <span class="tag ${fin?'tdone':'tpend'}">${fin?'완료':'대기'}</span></div>
+        <div class="gc-teams">
+          <span class="${fin&&r.winner===0?'gc-win':''}">${ciA+1}반</span>
+          <span class="gc-vs">vs</span>
+          <span class="${fin&&r.winner===1?'gc-win':''}">${ciB+1}반</span>
+        </div>
+        ${fin?`<div class="gc-res">승자: ${r.winner===0?ciA+1:ciB+1}반</div>`:''}
+      </div>`;
+    }).join('');
+
+    const qBody=document.getElementById('d-quiz-body');
+    if(qBody){
+      const winners=getQuizWinners();
+      qBody.innerHTML=`<div class="card"><div class="card-title">퀴즈 점수 현황</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">선택 학급: <strong>${classListText(winners)}</strong></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px">${winners.length}/${QUIZ_WINNER_COUNT}학급 선택 · 선택 학급 각 10점</div>
+      </div>`;
+    }
+    const bBody=document.getElementById('d-bonus-body');
+    if(bBody){
+      const entries=getBonusEntries().slice().reverse();
+      const byClass=getBonusScores();
+      bBody.innerHTML=`<div class="card"><div class="card-title">학급별 보너스 합계</div>
+        <table class="jtable"><thead><tr><th>학급</th><th>보너스 합계</th></tr></thead><tbody>
+        ${Array.from({length:CLASS_COUNT},(_,ci)=>`<tr><td style="font-weight:600">${ci+1}반</td><td>${byClass[ci]}점</td></tr>`).join('')}
+        </tbody></table></div>
+        <div class="card"><div class="card-title">최근 부여 내역</div>
+        ${entries.length?entries.map(b=>`<div style="font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)"><strong>${className(b.ci)}</strong> ${b.points}점 ${b.memo?`· ${b.memo}`:''}</div>`).join(''):'<div style="font-size:12px;color:var(--text3)">보너스 점수 없음</div>'}
+        </div>`;
+    }
+  };
+
+  downloadExcel = function() {
+    const {sc:jsc, bests} = getJumpScores();
+    const alSc=getRound4Scores('airladder'),wpSc=getRound4Scores('wavepass'),rlSc=getRound4Scores('relay');
+    const smSc=getMatchScores('superman'),twSc=getMatchScores('tugofwar'),pkSc=getPKScores();
+    const qzSc=getQuizScores(),boSc=getBonusScores();
+    const rankMap={};
+    bests.map((v,i)=>({v,i})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).forEach((x,r)=>rankMap[x.i]=r+1);
+
+    const cls = Array.from({length:CLASS_COUNT},(_,i)=>({
+      i, bb:bbScore(i), jr:jsc[i], al:alSc[i], wp:wpSc[i], sm:smSc[i], tw:twSc[i], pk:pkSc[i], rl:rlSc[i], qz:qzSc[i], bo:boSc[i],
+      total:bbScore(i)+jsc[i]+alSc[i]+wpSc[i]+smSc[i]+twSc[i]+pkSc[i]+rlSc[i]+qzSc[i]+boSc[i]
+    })).sort((a,b)=>b.total-a.total);
+
+    const wb = XLSX.utils.book_new();
+    const overall = [['순위','학급','농구','줄넘기','에어사다리','파도넘기','슈퍼맨','줄다리기','승부차기','계주','퀴즈','보너스','합계']];
+    cls.forEach((c,rank) => overall.push([rank+1, `${c.i+1}반`, c.bb, c.jr, c.al, c.wp, c.sm, c.tw, c.pk, c.rl, c.qz, c.bo, c.total]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(overall), '종합순위');
+
+    const bbRows = [['경기','팀 A','팀 A 골득점','팀 B 골득점','팀 B','승자']];
+    state.bball.forEach((g,gi) => {
+      const tA = g.teamA!=null?`${g.teamA+1}반`:'미정';
+      const tB = g.teamB!=null?`${g.teamB+1}반`:'미정';
+      bbRows.push([`경기 ${gi+1}`, tA, g.scoreA??'', g.scoreB??'', tB, g.done?(g.winner===0?tA:tB):'미완료']);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(bbRows), '농구');
+
+    const jrRows = [['학급','1회','2회','3회','최고기록','순위','점수']];
+    Array.from({length:CLASS_COUNT},(_,ci)=>{
+      const j=state.jump[ci];
+      const vs=[j.r1,j.r2,j.r3].filter(x=>x!=null).map(Number);
+      const best=vs.length?Math.max(...vs):null;
+      const r=rankMap[ci];
+      const sc=r===1?10:r===2?9:r===3?8:j.done?0:'';
+      jrRows.push([`${ci+1}반`, j.r1??'', j.r2??'', j.r3??'', best??'', r?`${r}위`:'', sc]);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(jrRows), '단체줄넘기');
+
+    const alRows=[['구분','선택 학급','점수']];
+    getAirladderWinners().forEach(ci=>alRows.push(['1등', `${ci+1}반`, 10]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(alRows), '에어사다리');
+
+    [{key:'wavepass',name:'파도넘기'},{key:'relay',name:'계주'}].forEach(({key,name})=>{
+      const rows=[[`라운드`,`참가반`,`1위`,`2위`,`1위 점수`,`2위 점수`]];
+      ROUND4_ROUNDS[key].forEach((teams,ri)=>{
+        const r=state[key][ri];
+        const teamNames=teams.map(ci=>`${ci+1}반`);
+        rows.push([`${ri+1}R`, teamNames.join(', '), r.rank1!=null?teamNames[r.rank1]:'', r.rank2!=null?teamNames[r.rank2]:'', r.done&&r.rank1!=null?10:'', r.done&&r.rank2!=null?9:'']);
+      });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), name);
+    });
+
+    [{key:'superman',name:'슈퍼맨'},{key:'tugofwar',name:'줄다리기'}].forEach(({key,name})=>{
+      const rows=[['라운드','팀A','팀B','승자']];
+      MATCH_ROUNDS[key].forEach((teams,ri)=>{
+        const r=state[key][ri];
+        const nameA=teams[0].map(ci=>`${ci+1}반`).join('+');
+        const nameB=teams[1].map(ci=>`${ci+1}반`).join('+');
+        rows.push([`${ri+1}R`, nameA, nameB, r.done&&r.winner!=null?(r.winner===0?nameA:nameB):'미완료']);
+      });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), name);
+    });
+
+    const pkRows=[['경기','팀A','팀B','승자']];
+    PK_MATCHES.forEach(([ciA,ciB],ri)=>{
+      const r=state.penaltykick[ri];
+      pkRows.push([`경기 ${ri+1}`, `${ciA+1}반`, `${ciB+1}반`, r.done&&r.winner!=null?(r.winner===0?`${ciA+1}반`:`${ciB+1}반`):'미완료']);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(pkRows), '승부차기');
+
+    const qRows=[['구분','선택 학급','점수']];
+    getQuizWinners().forEach(ci=>qRows.push(['퀴즈', `${ci+1}반`, 10]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(qRows), '퀴즈');
+
+    const bRows=[['학급','점수','메모','입력시각']];
+    getBonusEntries().forEach(b=>bRows.push([`${b.ci+1}반`, b.points, b.memo||'', new Date(b.ts).toLocaleString('ko-KR')]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(bRows), '보너스');
+
+    XLSX.writeFile(wb, `안산강서고_체육한마당_2026_${new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','')}.xlsx`);
+    toast('📥 엑셀 파일이 다운로드되었습니다!');
+  };
+
+  renderOp = function() {
+    ensureStateExtensions();
+    document.getElementById('op-name').textContent = curUser.name;
+    const resetActions = document.getElementById('reset-actions');
+    if (resetActions) {
+      resetActions.style.display = curUser.id === 'asgs03' ? 'inline-flex' : 'none';
+      if(curUser.id === 'asgs03' && !document.getElementById('reset-quiz-btn')){
+        resetActions.insertAdjacentHTML('beforeend', '<button class="btn-sm btn-red" id="reset-quiz-btn" onclick="resetSection(\'quiz\')">퀴즈 초기화</button><button class="btn-sm btn-red" id="reset-bonus-btn" onclick="resetSection(\'bonus\')">보너스 초기화</button>');
+      }
+    }
+    const tabs = document.getElementById('op-tabs');
+    tabs.innerHTML = '';
+    const tabLabels = {basketball:'농구',jumprope:'단체줄넘기',airladder:'에어사다리',wavepass:'파도넘기',superman:'슈퍼맨',tugofwar:'줄다리기',penaltykick:'승부차기',relay:'계주',quiz:'퀴즈',bonus:'보너스'};
+    curUser.can.forEach(type => {
+      const b = document.createElement('button');
+      b.className = 'op-tab'+(curOpTab===type?' on':'');
+      b.textContent = tabLabels[type]||type;
+      b.onclick = ()=>{ curOpTab=type; if(type==='basketball') curGameIdx=findNextGame(); renderOp(); };
+      tabs.appendChild(b);
+    });
+    const body = document.getElementById('op-body');
+    if (curOpTab==='basketball') { body.innerHTML=renderBbOp(); bindBbEvents(); }
+    else if (curOpTab==='jumprope') { body.innerHTML=renderJrOp(); bindJrEvents(); }
+    else if (curOpTab==='airladder') { body.innerHTML=renderAirladderOp(); }
+    else if (['wavepass','relay'].includes(curOpTab)) { body.innerHTML=renderRound4Op(curOpTab); }
+    else if (['superman','tugofwar'].includes(curOpTab)) { body.innerHTML=renderMatchOp(curOpTab); }
+    else if (curOpTab==='penaltykick') { body.innerHTML=renderPKOp(); }
+    else if (curOpTab==='quiz') { body.innerHTML=renderQuizOp(); }
+    else if (curOpTab==='bonus') { body.innerHTML=renderBonusOp(); }
+  };
+
+  window.renderAirladderOp = function(){
+    const winners=getAirladderWinners();
+    const done=isAirladderDone() && winners.length>=AIRLADDER_WINNER_COUNT;
+    return `<div class="prog-bar">
+      <div class="prog-head"><div class="prog-title">에어사다리 진행 현황</div><div style="font-size:13px;font-weight:700;color:var(--text2)">선택 ${winners.length} / ${AIRLADDER_WINNER_COUNT}학급</div></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${winners.length/AIRLADDER_WINNER_COUNT*100}%"></div></div>
+    </div>
+    <div class="card"><div class="card-title">에어사다리 1등 학급 4개반 선택 <span class="tag ${done?'tdone':'tpend'}">${done?'완료':'대기'}</span></div>
+      ${done?`<div class="done-row"><span class="done-txt">🏆 10점 부여: ${classListText(winners)}</span><button class="edit-btn" onclick="editAirladder()">✏️ 수정</button></div>`:
+      `<div style="font-size:12px;color:var(--text2);margin-bottom:.75rem">1등 학급 4개반을 선택하면 각 학급에 10점이 부여됩니다.</div>
+      <div class="id-btn-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem">
+        ${Array.from({length:CLASS_COUNT},(_,ci)=>`<button class="id-btn ${winners.includes(ci)?'selected':''}" onclick="toggleAirladderWinner(${ci})">${ci+1}반<span class="id-role">${winners.includes(ci)?'선택됨':'선택'}</span></button>`).join('')}
+      </div>
+      <div style="font-size:12px;color:${winners.length===AIRLADDER_WINNER_COUNT?'var(--green)':'var(--red)'};margin-bottom:.75rem">현재 ${winners.length}/${AIRLADDER_WINNER_COUNT}개 학급 선택</div>
+      <button class="sbtn" onclick="submitAirladder()" ${winners.length===AIRLADDER_WINNER_COUNT?'':'disabled'}>입력 완료 — 서명 진행</button>`}
+    </div>`;
+  };
+  window.toggleAirladderWinner = function(ci){
+    let winners=getAirladderWinners();
+    if(winners.includes(ci)) winners=winners.filter(x=>x!==ci);
+    else {
+      if(winners.length>=AIRLADDER_WINNER_COUNT){ toast(`에어사다리는 ${AIRLADDER_WINNER_COUNT}개 학급만 선택할 수 있습니다.`); return; }
+      winners.push(ci);
+    }
+    setAirladderWinners(winners, false);
+    renderOp();
+  };
+  window.submitAirladder = function(){
+    const winners=getAirladderWinners();
+    if(winners.length!==AIRLADDER_WINNER_COUNT){ toast(`에어사다리는 ${AIRLADDER_WINNER_COUNT}개 학급을 선택해야 합니다.`); return; }
+    sigPend={type:'airladder', winners:winners.slice()};
+    openSig();
+  };
+  window.editAirladder = function(){
+    if(!confirm('에어사다리 결과를 수정하시겠습니까?\n수정 후 다시 서명이 필요합니다.')) return;
+    setAirladderWinners(getAirladderWinners(), false);
+    renderOp();
+    toast('에어사다리 수정 모드로 전환되었습니다.');
+  };
+
+  window.renderQuizOp = function(){
+    const winners=getQuizWinners();
+    const done=state.quiz.done && winners.length>=QUIZ_WINNER_COUNT;
+    return `<div class="prog-bar">
+      <div class="prog-head"><div class="prog-title">퀴즈 진행 현황</div><div style="font-size:13px;font-weight:700;color:var(--text2)">선택 ${winners.length} / ${QUIZ_WINNER_COUNT}학급</div></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${winners.length/QUIZ_WINNER_COUNT*100}%"></div></div>
+    </div>
+    <div class="card"><div class="card-title">퀴즈 점수 학급 선택 <span class="tag ${done?'tdone':'tpend'}">${done?'완료':'대기'}</span></div>
+      ${done?`<div class="done-row"><span class="done-txt">🧠 10점 부여: ${classListText(winners)}</span><button class="edit-btn" onclick="editQuiz()">✏️ 수정</button></div>`:
+      `<div style="font-size:12px;color:var(--text2);margin-bottom:.75rem">퀴즈 점수를 받을 9개 학급을 선택하면 각 학급에 10점이 부여됩니다.</div>
+      <div class="id-btn-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem">
+        ${Array.from({length:CLASS_COUNT},(_,ci)=>`<button class="id-btn ${winners.includes(ci)?'selected':''}" onclick="toggleQuizWinner(${ci})">${ci+1}반<span class="id-role">${winners.includes(ci)?'선택됨':'선택'}</span></button>`).join('')}
+      </div>
+      <div style="font-size:12px;color:${winners.length===QUIZ_WINNER_COUNT?'var(--green)':'var(--red)'};margin-bottom:.75rem">현재 ${winners.length}/${QUIZ_WINNER_COUNT}개 학급 선택</div>
+      <button class="sbtn" onclick="submitQuiz()" ${winners.length===QUIZ_WINNER_COUNT?'':'disabled'}>퀴즈 결과 저장</button>`}
+    </div>`;
+  };
+  window.toggleQuizWinner = function(ci){
+    let winners=getQuizWinners();
+    if(winners.includes(ci)) winners=winners.filter(x=>x!==ci);
+    else {
+      if(winners.length>=QUIZ_WINNER_COUNT){ toast(`퀴즈는 ${QUIZ_WINNER_COUNT}개 학급만 선택할 수 있습니다.`); return; }
+      winners.push(ci);
+    }
+    setQuizWinners(winners, false);
+    renderOp();
+  };
+  window.submitQuiz = function(){
+    const winners=getQuizWinners();
+    if(winners.length!==QUIZ_WINNER_COUNT){ toast(`퀴즈는 ${QUIZ_WINNER_COUNT}개 학급을 선택해야 합니다.`); return; }
+    if(!confirm(`퀴즈 점수를 저장할까요?\n${classListText(winners)}에게 각 10점이 부여됩니다.`)) return;
+    setQuizWinners(winners, true);
+    saveState().then(()=>{ refreshDash(); renderOp(); toast('✅ 퀴즈 점수가 저장되었습니다.'); });
+  };
+  window.editQuiz = function(){
+    if(!confirm('퀴즈 결과를 수정하시겠습니까?')) return;
+    setQuizWinners(getQuizWinners(), false);
+    renderOp();
+  };
+
+  window.renderBonusOp = function(){
+    const entries=getBonusEntries();
+    const totals=getBonusScores();
+    return `<div class="card"><div class="card-title">보너스 점수 입력</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem">
+        <div><label class="flabel">학급</label><select class="finput" id="bonus-class">${Array.from({length:CLASS_COUNT},(_,ci)=>`<option value="${ci}">${ci+1}반</option>`).join('')}</select></div>
+        <div><label class="flabel">점수</label><input class="finput" id="bonus-points" type="number" placeholder="예: 5"></div>
+      </div>
+      <label class="flabel">메모 선택</label><input class="finput" id="bonus-memo" type="text" placeholder="예: 응원상, 질서상 등">
+      <button class="sbtn" onclick="submitBonus()">보너스 점수 저장</button>
+    </div>
+    <div class="card"><div class="card-title">학급별 보너스 합계</div>
+      <table class="jtable"><thead><tr><th>학급</th><th>합계</th></tr></thead><tbody>
+      ${Array.from({length:CLASS_COUNT},(_,ci)=>`<tr><td style="font-weight:600">${ci+1}반</td><td>${totals[ci]}점</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div class="card"><div class="card-title">보너스 입력 내역</div>
+      ${entries.length?entries.map((b,idx)=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap">
+        <span><strong>${className(b.ci)}</strong> ${b.points}점 ${b.memo?`· ${b.memo}`:''}</span>
+        <button class="edit-btn" onclick="deleteBonus(${idx})">삭제</button>
+      </div>`).join(''):'<div style="font-size:12px;color:var(--text3)">아직 입력된 보너스 점수가 없습니다.</div>'}
+    </div>`;
+  };
+  window.submitBonus = function(){
+    const ci=Number(document.getElementById('bonus-class')?.value);
+    const points=Number(document.getElementById('bonus-points')?.value);
+    const memo=(document.getElementById('bonus-memo')?.value||'').trim();
+    if(!Number.isInteger(ci)||ci<0||ci>=CLASS_COUNT){ toast('학급을 선택해주세요.'); return; }
+    if(!Number.isFinite(points) || points===0){ toast('0이 아닌 점수를 입력해주세요.'); return; }
+    const sign = points>0 ? '+' : '';
+    if(!confirm(`${ci+1}반에 보너스 ${sign}${points}점을 저장할까요?`)) return;
+    getBonusEntries().push({ci, points, memo, ts:Date.now(), id:`bonus-${Date.now()}-${Math.random().toString(36).slice(2,8)}`});
+    saveState().then(()=>{ refreshDash(); renderOp(); toast('✅ 보너스 점수가 저장되었습니다.'); });
+  };
+  window.deleteBonus = function(idx){
+    const entries=getBonusEntries();
+    const b=entries[idx];
+    if(!b) return;
+    if(!confirm(`${className(b.ci)} 보너스 ${b.points}점을 삭제할까요?`)) return;
+    entries.splice(idx,1);
+    state.bonus=entries;
+    saveState().then(()=>{ refreshDash(); renderOp(); toast('✅ 보너스 점수가 삭제되었습니다.'); });
+  };
+
+  const originalOpenSig = openSig;
+  openSig = function(){
+    const d=sigPend;
+    if(d && d.type==='airladder'){
+      setTxt('sig-sub', `에어사다리 · 10점 부여 학급: ${classListText(d.winners)}`);
+      setTxt('sig-la', '에어사다리 결과 대표 서명');
+      setTxt('sig-lb', '계측관 확인 서명');
+      sigA=false;sigB=false;
+      clrSig('a');clrSig('b');
+      updSigBtn();
+      document.getElementById('sig-ov').classList.add('open');
+      setupCv('a');setupCv('b');
+      return;
+    }
+    originalOpenSig();
+  };
+
+  const originalConfirmSig = confirmSig;
+  confirmSig = function(){
+    if(!sigA||!sigB)return;
+    const d=sigPend;
+    if(d && d.type==='airladder'){
+      setAirladderWinners(d.winners, true);
+      document.getElementById('sig-ov').classList.remove('open');
+      saveState();
+      renderOp();
+      toast('✅ Firebase에 저장 완료! 모든 화면에 실시간 반영됩니다.');
+      return;
+    }
+    originalConfirmSig();
+  };
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    ensureSpecialUI();
+    ensureStateExtensions();
+    renderLoginGroups();
+    refreshDash();
+  });
+  ensureSpecialUI();
+  ensureStateExtensions();
+  renderLoginGroups();
+  refreshDash();
+})();
+
 // Init login groups on page load
 renderLoginGroups();
 </script>
